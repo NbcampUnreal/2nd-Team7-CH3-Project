@@ -7,7 +7,7 @@
 
 UT7_CombatComponent::UT7_CombatComponent()
 {
-	
+
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
@@ -22,24 +22,27 @@ void UT7_CombatComponent::BeginPlay()
 
 void UT7_CombatComponent::EquipWeapon(AT7_Weapon* WeaponToEquip)
 {
-	if (Character == nullptr || WeaponToEquip == nullptr) return;
+    if (Character == nullptr || WeaponToEquip == nullptr) return;
 
-	//  기존 무기 버리기
-	DropWeapon();
+    // 기존 무기 버리기
+    DropWeapon();
 
-	EquippedWeapon = WeaponToEquip;
-	EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
+    EquippedWeapon = WeaponToEquip;
+    EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
 
-	// 무기를 캐릭터의 손에 부착
-	const USkeletalMeshSocket* HandSocket = Character->GetMesh()->GetSocketByName(FName("RightHandSocket"));
-	if (HandSocket)
-	{
-		HandSocket->AttachActor(EquippedWeapon, Character->GetMesh());
-	}
+    const USkeletalMeshSocket* HandSocket = Character->GetMesh()->GetSocketByName(FName("RightHandSocket"));
+    if (HandSocket)
+    {
+        HandSocket->AttachActor(EquippedWeapon, Character->GetMesh());
+    }
 
-	//  무기 소유자 설정
-	EquippedWeapon->SetOwner(Character);
+    // 무기 소유자 설정
+    EquippedWeapon->SetOwner(Character);
+
+    
+    Character->SetCurrentWeapon(EquippedWeapon);  
 }
+
 
 void UT7_CombatComponent::DropWeapon()
 {

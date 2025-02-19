@@ -17,11 +17,11 @@ AT7_PlayerCharacter::AT7_PlayerCharacter()
 	bUseControllerRotationRoll = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	
+
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArmComponent->bUsePawnControlRotation = true;
 	SpringArmComponent->SetupAttachment(RootComponent);
-	
+
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->bUsePawnControlRotation = false;
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
@@ -64,16 +64,18 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		
+
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
-		
+
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 
 		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &ThisClass::PickupWeapon);
+
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AT7_PlayerCharacter::FireWeapon);
 
 	}
 }
@@ -82,17 +84,19 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 //  무기 줍기 실행 (E키)
 void AT7_PlayerCharacter::PickupWeapon()
 {
-	if (CombatComponent && OverlappingWeapon)
-	{
-		//  무기를 주운 순간 UI 숨기기
-		OverlappingWeapon->SetPickupWidgetVisibility(false);
+    if (CombatComponent && OverlappingWeapon)
+    {
+        OverlappingWeapon->SetPickupWidgetVisibility(false);
 
-		//  CombatComponent를 통해 무기 장착
-		CombatComponent->EquipWeapon(OverlappingWeapon);
+        // CombatComponent를 통해 무기 장착
+        CombatComponent->EquipWeapon(OverlappingWeapon);
 
-		//  줍기 가능한 무기 초기화
-		OverlappingWeapon = nullptr;
-	}
+        // 현재 무기 설정 (중요!)
+        CurrentWeapon = OverlappingWeapon;
+
+        // 줍기 가능한 무기 초기화
+        OverlappingWeapon = nullptr;
+    }
 }
 
 
@@ -115,5 +119,20 @@ void AT7_PlayerCharacter::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComp
 	if (Weapon && Weapon == OverlappingWeapon)
 	{
 		OverlappingWeapon = nullptr;
+	}
+}
+
+void AT7_PlayerCharacter::FireWeapon()
+{
+	UE_LOG(LogTemp, Warning, TEXT("FireWeapon() 호출됨!"));
+
+	if (CurrentWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("현재 무기 있음 -> 무기 발사"));
+		CurrentWeapon->Fire();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("현재 무기 없음!"));
 	}
 }
