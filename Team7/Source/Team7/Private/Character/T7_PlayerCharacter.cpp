@@ -54,6 +54,8 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &ThisClass::PickupWeapon);
 
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AT7_PlayerCharacter::FireWeapon);
+
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ThisClass::StartSprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 
@@ -95,17 +97,19 @@ void AT7_PlayerCharacter::Look(const FInputActionValue& Value)
 //  무기 줍기 실행 (E키)
 void AT7_PlayerCharacter::PickupWeapon()
 {
-	if (CombatComponent && OverlappingWeapon)
-	{
-		//  무기를 주운 순간 UI 숨기기
-		OverlappingWeapon->SetPickupWidgetVisibility(false);
+    if (CombatComponent && OverlappingWeapon)
+    {
+        OverlappingWeapon->SetPickupWidgetVisibility(false);
 
-		//  CombatComponent를 통해 무기 장착
-		CombatComponent->EquipWeapon(OverlappingWeapon);
+        // CombatComponent를 통해 무기 장착
+        CombatComponent->EquipWeapon(OverlappingWeapon);
 
-		//  줍기 가능한 무기 초기화
-		OverlappingWeapon = nullptr;
-	}
+        // 현재 무기 설정 (중요!)
+        CurrentWeapon = OverlappingWeapon;
+
+        // 줍기 가능한 무기 초기화
+        OverlappingWeapon = nullptr;
+    }
 }
 
 void AT7_PlayerCharacter::StartSprint()
@@ -171,5 +175,20 @@ void AT7_PlayerCharacter::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComp
 	if (Weapon && Weapon == OverlappingWeapon)
 	{
 		OverlappingWeapon = nullptr;
+	}
+}
+
+void AT7_PlayerCharacter::FireWeapon()
+{
+	UE_LOG(LogTemp, Warning, TEXT("FireWeapon() 호출됨!"));
+
+	if (CurrentWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("현재 무기 있음 -> 무기 발사"));
+		CurrentWeapon->Fire();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("현재 무기 없음!"));
 	}
 }

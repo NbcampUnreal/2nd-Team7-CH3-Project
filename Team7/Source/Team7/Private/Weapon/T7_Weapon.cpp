@@ -6,18 +6,20 @@
 #include "GameFramework/PlayerController.h"
 #include "Weapon/T7_Projectile.h"
 #include "Camera/PlayerCameraManager.h"
+#include "Animation/AnimationAsset.h"
 #include "Team7/Public/Character/T7_PlayerCharacter.h"
+#include "Components/SkeletalMeshComponent.h"
 
 AT7_Weapon::AT7_Weapon()
 {
-	PrimaryActorTick.bCanEverTick = false;
+    PrimaryActorTick.bCanEverTick = false;
 
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	SetRootComponent(WeaponMesh);
+    WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+    SetRootComponent(WeaponMesh);
 
-	WeaponMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	WeaponMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    WeaponMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+    WeaponMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+    WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     PickupTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("PickupTrigger"));
     PickupTrigger->SetupAttachment(RootComponent);
@@ -28,8 +30,8 @@ AT7_Weapon::AT7_Weapon()
     PickupTrigger->OnComponentBeginOverlap.AddDynamic(this, &AT7_Weapon::OnWeaponOverlap);
     PickupTrigger->OnComponentEndOverlap.AddDynamic(this, &AT7_Weapon::OnWeaponEndOverlap);
 
-	PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
-	PickupWidget->SetupAttachment(RootComponent);
+    PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
+    PickupWidget->SetupAttachment(RootComponent);
 
     // 초기 상태 설정
     WeaponState = EWeaponState::EWS_Initial;
@@ -38,15 +40,15 @@ AT7_Weapon::AT7_Weapon()
 
 void AT7_Weapon::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
+
     PickupWidget->SetVisibility(false);
-	
+
 }
 
 void AT7_Weapon::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 
 }
 
@@ -84,20 +86,12 @@ void AT7_Weapon::Fire()
         World->SpawnActor<AT7_Projectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
     }
 
-    if (FireSound)
-    {
-        UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-    }
-
     if (FireAnimation && WeaponMesh)
     {
-        UAnimInstance* AnimInstance = WeaponMesh->GetAnimInstance();
-        if (AnimInstance)
-        {
-            AnimInstance->Montage_Play(FireAnimation);
-        }
+        WeaponMesh->PlayAnimation(FireAnimation, false);
     }
 }
+
 
 void AT7_Weapon::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -105,7 +99,7 @@ void AT7_Weapon::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
     AT7_PlayerCharacter* PlayerCharacter = Cast<AT7_PlayerCharacter>(OtherActor);
     if (PlayerCharacter)
     {
-        PlayerCharacter->OverlappingWeapon = this;  
+        PlayerCharacter->OverlappingWeapon = this;
         PickupWidget->SetVisibility(true);  // UI 표시
     }
 }

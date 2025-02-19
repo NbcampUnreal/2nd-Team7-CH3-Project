@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -22,23 +21,26 @@ UCLASS()
 class TEAM7_API AT7_Weapon : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 
 	AT7_Weapon();
 	virtual void Tick(float DeltaTime) override;
-	
+
+	// 총기 발사
 	UFUNCTION(BlueprintCallable)
 	void Fire();
 
 	void SetWeaponState(EWeaponState NewState);
 
+	// 줍기 UI설정
 	void SetPickupWidgetVisibility(bool bVisible);
+
 protected:
 
 	virtual void BeginPlay() override;
 
-	
+
 private:
 
 	//무기
@@ -61,13 +63,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TSubclassOf<class AT7_Projectile> ProjectileClass;
 
-	// 발사 사운드 
-	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-	USoundBase* FireSound;
+	
 
 	// 발사 애니메이션 
-	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-	UAnimMontage* FireAnimation;
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	class UAnimationAsset* FireAnimation;
+
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Events")
 	FOnWeaponFired OnWeaponFired;
@@ -80,6 +81,6 @@ private:
 	void OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-public:	
+public:
 
 };
