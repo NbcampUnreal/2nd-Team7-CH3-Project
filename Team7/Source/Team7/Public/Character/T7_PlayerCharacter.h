@@ -84,6 +84,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Input")
 	TObjectPtr<UInputAction> SwitchCameraAction = nullptr;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Movement")
+	float NormalMaxWalkSpeed = 600.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Movement")
+	float SprintMaxWalkSpeed = NormalMaxWalkSpeed * 1.5;
 private:
 	UPROPERTY(VisibleAnywhere, Category="T7|Camera")
 	TObjectPtr<USpringArmComponent> TPSSpringArmComponent = nullptr;
@@ -102,10 +107,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "T7|Combat")
 	TObjectPtr<UT7_CombatComponent> CombatComponent = nullptr;
-
-	const float NormalMaxWalkSpeed = 600.0;
-
-	const float SprintMaxWalkSpeed = NormalMaxWalkSpeed * 1.5;
 
 	bool bUseTPSCamera = true;
 };
