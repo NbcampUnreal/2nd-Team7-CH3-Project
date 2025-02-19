@@ -19,7 +19,7 @@ class TEAM7_API AT7_PlayerCharacter : public AT7_CharacterBase
 	GENERATED_BODY()
 
 public:
-	AT7_PlayerCharacter();
+	AT7_PlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
 	//  줍기 가능한 무기
 	UPROPERTY(VisibleAnywhere, Category = "T7|Weapon")
@@ -27,29 +27,19 @@ public:
 
 	AT7_Weapon* GetCurrentWeapon() const { return CurrentWeapon; }
 	void SetCurrentWeapon(AT7_Weapon* NewWeapon) { CurrentWeapon = NewWeapon; }
-	AT7_PlayerCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	void Move(const FInputActionValue& Value);
-
 	void Look(const FInputActionValue& Value);
-
 	void PickupWeapon();
 	void EquipWeapon(AT7_Weapon* Weapon);
 	void DropWeapon();
-
 	void FireWeapon();
 
-protected:
-
 	void StartSprint();
-
 	void StopSprint();
-
 	void StartAim();
-	
 	void StopAim();
-
 	void SwitchCamera();
 
 	// 전역적인 움직임(메뉴 이동 등)은 PlayerController의 SetupInputComponent()에서
@@ -73,11 +63,10 @@ protected:
 	TObjectPtr<UInputAction> SprintAction = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Input")
-	UInputAction* PickupAction = nullptr;
+	TObjectPtr<UInputAction> PickupAction = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Input")
-	UInputAction* FireAction = nullptr;
-	TObjectPtr<UInputAction> PickupAction = nullptr;
+	TObjectPtr<UInputAction> FireAction = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Input")
 	TObjectPtr<UInputAction> AimAction = nullptr;
@@ -86,21 +75,19 @@ protected:
 	TObjectPtr<UInputAction> SwitchCameraAction = nullptr;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category="T7|Camera")
+	UPROPERTY(VisibleAnywhere, Category = "T7|Camera")
 	TObjectPtr<USpringArmComponent> TPSSpringArmComponent = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category="T7|Camera")
+	UPROPERTY(VisibleAnywhere, Category = "T7|Camera")
 	TObjectPtr<USpringArmComponent> FPSSpringArmComponent = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category="T7|Camera")
+	UPROPERTY(VisibleAnywhere, Category = "T7|Camera")
 	TObjectPtr<UCameraComponent> TPSCameraComponent = nullptr;
 
-private:
 	UPROPERTY(VisibleAnywhere, Category = "T7|Camera")
-	TObjectPtr<USpringArmComponent> SpringArmComponent = nullptr;
+	TObjectPtr<UCameraComponent> FPSCameraComponent = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category = "T7|Camera")
-	TObjectPtr<UCameraComponent> CameraComponent = nullptr;
+	bool bUseTPSCamera = true;
 
 	//  무기 트리거 감지를 위한 함수
 	UFUNCTION()
@@ -110,13 +97,4 @@ private:
 	UFUNCTION()
 	void OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-	UPROPERTY(VisibleAnywhere, Category = "Combat")
-	UT7_CombatComponent* CombatComponent;
-
-
-	UPROPERTY(VisibleAnywhere, Category="T7|Camera")
-	TObjectPtr<UCameraComponent> FPSCameraComponent = nullptr;
-
-	bool bUseTPSCamera = true;
 };
