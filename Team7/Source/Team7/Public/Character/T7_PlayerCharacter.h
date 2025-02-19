@@ -5,7 +5,6 @@
 #include "T7_PlayerCharacter.generated.h"
 
 class AT7_Weapon;
-class UT7_CombatComponent;
 
 class UInputMappingContext;
 class UCameraComponent;
@@ -20,7 +19,7 @@ class TEAM7_API AT7_PlayerCharacter : public AT7_CharacterBase
 	GENERATED_BODY()
 
 public:
-	AT7_PlayerCharacter();
+	AT7_PlayerCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	void Move(const FInputActionValue& Value);
@@ -28,10 +27,6 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void PickupWeapon();
-
-	void EquipWeapon(AT7_Weapon* Weapon);
-
-	void DropWeapon();
 
 	void StartSprint();
 
@@ -83,12 +78,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Input")
 	TObjectPtr<UInputAction> SwitchCameraAction = nullptr;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Movement")
-	float NormalMaxWalkSpeed = 600.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Movement")
-	float SprintMaxWalkSpeed = NormalMaxWalkSpeed * 1.5;
 private:
 	UPROPERTY(VisibleAnywhere, Category="T7|Camera")
 	TObjectPtr<USpringArmComponent> TPSSpringArmComponent = nullptr;
@@ -101,12 +91,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category="T7|Camera")
 	TObjectPtr<UCameraComponent> FPSCameraComponent = nullptr;
-
-	UPROPERTY(VisibleAnywhere, Category = "T7|Weapon")
-	TObjectPtr<AT7_Weapon> CurrentWeapon = nullptr;
-
-	UPROPERTY(VisibleAnywhere, Category = "T7|Combat")
-	TObjectPtr<UT7_CombatComponent> CombatComponent = nullptr;
 
 	bool bUseTPSCamera = true;
 };

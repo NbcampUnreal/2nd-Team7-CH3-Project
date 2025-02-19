@@ -5,13 +5,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Weapon/T7_Weapon.h"
-#include "Components/SphereComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Combat/T7_CombatComponent.h"
-#include "PlayerController/T7_PlayerController.h"
 
-
-AT7_PlayerCharacter::AT7_PlayerCharacter()
+AT7_PlayerCharacter::AT7_PlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -34,10 +30,6 @@ AT7_PlayerCharacter::AT7_PlayerCharacter()
 	FPSCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FPSCameraComponent"));
 	FPSCameraComponent->bUsePawnControlRotation = true;
 	FPSCameraComponent->SetupAttachment(FPSSpringArmComponent);
-
-	CombatComponent = CreateDefaultSubobject<UT7_CombatComponent>(TEXT("CombatComponent"));
-
-	GetCharacterMovement()->MaxWalkSpeed = NormalMaxWalkSpeed;
 }
 
 void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -114,14 +106,6 @@ void AT7_PlayerCharacter::PickupWeapon()
 		//  줍기 가능한 무기 초기화
 		OverlappingWeapon = nullptr;
 	}
-}
-
-void AT7_PlayerCharacter::EquipWeapon(AT7_Weapon* Weapon)
-{
-}
-
-void AT7_PlayerCharacter::DropWeapon()
-{
 }
 
 void AT7_PlayerCharacter::StartSprint()
