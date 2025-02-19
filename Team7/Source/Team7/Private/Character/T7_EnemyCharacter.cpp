@@ -6,3 +6,9 @@ AT7_EnemyCharacter::AT7_EnemyCharacter()
 	AIControllerClass = AT7_EnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
+
+void AT7_EnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+}
+

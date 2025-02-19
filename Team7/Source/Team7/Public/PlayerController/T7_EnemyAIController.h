@@ -16,10 +16,4 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
-protected:
-	void MoveToCurrentPatrolPoint();
-	AT7_EnemyCharacter* GetEnemyCharacter() const;
-
-protected:
-	int32 CurrentPatrolIndex = 0;
 };
