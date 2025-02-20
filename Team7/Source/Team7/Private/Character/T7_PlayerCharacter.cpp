@@ -109,6 +109,11 @@ void AT7_PlayerCharacter::PickupWeapon()
 	}
 }
 
+void AT7_PlayerCharacter::DropWeapon()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DropWeapon() 호출됨!"));
+}
+
 void AT7_PlayerCharacter::StartSprint()
 {
 	GetCharacterMovement()->MaxWalkSpeed = SprintMaxWalkSpeed;
@@ -175,17 +180,3 @@ void AT7_PlayerCharacter::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComp
 	}
 }
 
-void AT7_PlayerCharacter::FireWeapon()
-{
-	UE_LOG(LogTemp, Warning, TEXT("FireWeapon() 호출됨!"));
-
-	if (CurrentWeapon)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("현재 무기 있음 -> 무기 발사"));
-		CurrentWeapon->Fire();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("현재 무기 없음!"));
-	}
-}
