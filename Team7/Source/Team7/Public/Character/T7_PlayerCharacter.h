@@ -25,7 +25,6 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "T7|Weapon")
 	AT7_Weapon* OverlappingWeapon = nullptr;
 
-	AT7_Weapon* GetCurrentWeapon() const { return CurrentWeapon; }
 	void SetCurrentWeapon(AT7_Weapon* NewWeapon) { CurrentWeapon = NewWeapon; }
 
 protected:

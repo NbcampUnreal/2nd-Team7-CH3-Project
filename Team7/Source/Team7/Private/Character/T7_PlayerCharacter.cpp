@@ -97,19 +97,16 @@ void AT7_PlayerCharacter::Look(const FInputActionValue& Value)
 //  무기 줍기 실행 (E키)
 void AT7_PlayerCharacter::PickupWeapon()
 {
-    if (CombatComponent && OverlappingWeapon)
-    {
-        OverlappingWeapon->SetPickupWidgetVisibility(false);
+	if (CombatComponent && OverlappingWeapon)
+	{
+		OverlappingWeapon->SetPickupWidgetVisibility(false);
 
-        // CombatComponent를 통해 무기 장착
-        CombatComponent->EquipWeapon(OverlappingWeapon);
+		CombatComponent->EquipWeapon(OverlappingWeapon);
 
-        // 현재 무기 설정 (중요!)
-        CurrentWeapon = OverlappingWeapon;
+		SetCurrentWeapon(OverlappingWeapon);
 
-        // 줍기 가능한 무기 초기화
-        OverlappingWeapon = nullptr;
-    }
+		OverlappingWeapon = nullptr;
+	}
 }
 
 void AT7_PlayerCharacter::StartSprint()

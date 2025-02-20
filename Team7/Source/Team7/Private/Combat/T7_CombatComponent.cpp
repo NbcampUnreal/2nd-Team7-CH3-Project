@@ -4,6 +4,7 @@
 #include "Weapon/T7_Weapon.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UT7_CombatComponent::UT7_CombatComponent()
 {
@@ -38,8 +39,8 @@ void UT7_CombatComponent::EquipWeapon(AT7_Weapon* WeaponToEquip)
 
     // 무기 소유자 설정
     EquippedWeapon->SetOwner(Character);
-
-    
+    Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+    Character->bUseControllerRotationYaw = true;
     Character->SetCurrentWeapon(EquippedWeapon);  
 }
 
