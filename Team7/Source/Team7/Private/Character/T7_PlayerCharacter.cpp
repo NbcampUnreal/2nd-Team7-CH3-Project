@@ -1,11 +1,11 @@
 ﻿#include "Team7/Public/Character/T7_PlayerCharacter.h"
+#include "Team7/Public/Combat/T7_CombatComponent.h"
+#include "Team7/Public/Weapon/T7_Weapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Weapon/T7_Weapon.h"
-#include "Combat/T7_CombatComponent.h"
 
 AT7_PlayerCharacter::AT7_PlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -112,6 +112,11 @@ void AT7_PlayerCharacter::PickupWeapon()
     }
 }
 
+void AT7_PlayerCharacter::DropWeapon()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DropWeapon() 호출됨!"));
+}
+
 void AT7_PlayerCharacter::StartSprint()
 {
 	GetCharacterMovement()->MaxWalkSpeed = SprintMaxWalkSpeed;
@@ -178,17 +183,3 @@ void AT7_PlayerCharacter::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComp
 	}
 }
 
-void AT7_PlayerCharacter::FireWeapon()
-{
-	UE_LOG(LogTemp, Warning, TEXT("FireWeapon() 호출됨!"));
-
-	if (CurrentWeapon)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("현재 무기 있음 -> 무기 발사"));
-		CurrentWeapon->Fire();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("현재 무기 없음!"));
-	}
-}

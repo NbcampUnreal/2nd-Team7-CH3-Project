@@ -1,10 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "T7_CharacterBase.h"
+#include "Team7/Public/Character/T7_CharacterBase.h"
 #include "T7_PlayerCharacter.generated.h"
-
-class AT7_Weapon;
 
 class UInputMappingContext;
 class UCameraComponent;
@@ -17,7 +15,7 @@ UCLASS()
 class TEAM7_API AT7_PlayerCharacter : public AT7_CharacterBase
 {
 	GENERATED_BODY()
-
+	
 public:
 	AT7_PlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
@@ -25,16 +23,11 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "T7|Weapon")
 	AT7_Weapon* OverlappingWeapon = nullptr;
 
-	AT7_Weapon* GetCurrentWeapon() const { return CurrentWeapon; }
-	void SetCurrentWeapon(AT7_Weapon* NewWeapon) { CurrentWeapon = NewWeapon; }
-
 protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void PickupWeapon();
-	void EquipWeapon(AT7_Weapon* Weapon);
 	void DropWeapon();
-	void FireWeapon();
 
 	void StartSprint();
 	void StopSprint();
