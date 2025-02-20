@@ -15,7 +15,6 @@ void AT7_ActorSpawner::BeginPlay()
 	if (GetWorld())
 	{
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), TargetPoints);
-		UE_LOG(LogTemp, Warning, TEXT("ActorClass!!!"))
 		SpawnActor();
 	}
 }
@@ -24,13 +23,12 @@ void AT7_ActorSpawner::SpawnActor()
 {
 	if (TargetPoints.IsEmpty())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Empty!!!"))
 		return;
 	}
 
 	for (AActor* Target : TargetPoints)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetPoints!!!"))
+		// 적 스폰
 		if (Target->ActorHasTag("Enemy"))
 		{
 			TSubclassOf<UObject> EnemyObject = (UClass*)LoadObject<UBlueprint>(nullptr, TEXT("/Game/Characters/EnemyAI/BP_T7_EnemyCharacter.BP_T7_EnemyCharacter"))->GeneratedClass;
@@ -38,13 +36,14 @@ void AT7_ActorSpawner::SpawnActor()
 				EnemyObject,
 				Target->GetActorLocation(),
 				FRotator::ZeroRotator);
-			UE_LOG(LogTemp, Warning, TEXT("Enemy!!!"))
 		}
 
-		/*if (Target->ActorHasTag("Item"))
+		// 보급 상자 스폰
+		/*TSubclassOf<UObject> ItemObject = (UClass*)LoadObject<UBlueprint>(nullptr, TEXT("****"))->GeneratedClass;
+		if (Target->ActorHasTag("Item"))
 		{
 			GetWorld()->SpawnActor<AActor>(
-				AT7_ItemBox::StaticClass(),
+				ItemObject,
 				Target->GetActorLocation(),
 				FRotator::ZeroRotator);
 		}*/
