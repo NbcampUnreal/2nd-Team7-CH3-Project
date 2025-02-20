@@ -1,11 +1,11 @@
 ﻿#include "Team7/Public/Character/T7_PlayerCharacter.h"
+#include "Team7/Public/Combat/T7_CombatComponent.h"
+#include "Team7/Public/Weapon/T7_Weapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Weapon/T7_Weapon.h"
-#include "Combat/T7_CombatComponent.h"
 
 AT7_PlayerCharacter::AT7_PlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

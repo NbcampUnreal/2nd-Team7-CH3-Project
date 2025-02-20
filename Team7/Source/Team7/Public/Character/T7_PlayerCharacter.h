@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "T7_CharacterBase.h"
+#include "Team7/Public/Character/T7_CharacterBase.h"
 #include "T7_PlayerCharacter.generated.h"
 
 class AT7_Weapon;
@@ -25,7 +25,6 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "T7|Weapon")
 	AT7_Weapon* OverlappingWeapon = nullptr;
 
-	void SetCurrentWeapon(AT7_Weapon* NewWeapon) { CurrentWeapon = NewWeapon; }
 
 protected:
 	void Move(const FInputActionValue& Value);
