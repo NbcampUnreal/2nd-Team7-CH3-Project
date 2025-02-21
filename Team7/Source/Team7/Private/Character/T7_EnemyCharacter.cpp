@@ -1,5 +1,4 @@
 #include "Team7/Public/Character/T7_EnemyCharacter.h"
-#include "Team7/Public/PlayerController/T7_EnemyAIController.h"
 
 AT7_EnemyCharacter::AT7_EnemyCharacter()
 {
