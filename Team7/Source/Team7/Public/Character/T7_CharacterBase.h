@@ -28,6 +28,7 @@ protected:
 	 void FireWeapon();
 
 protected:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Movement")
 	float NormalMaxWalkSpeed = 600.0;
 
