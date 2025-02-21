@@ -21,10 +21,12 @@ public:
 	AT7_Weapon* GetCurrentWeapon() const { return CurrentWeapon; }
 	void SetCurrentWeapon(AT7_Weapon* NewWeapon) { CurrentWeapon = NewWeapon; }
 
+	
+protected:
 	// 적 유닛 무기 셋업, 죽었을때 무기 드랍할 예정이면 Base에서 구현하는게 맞을듯
-	// void EquipWeapon(AT7_Weapon* Weapon);
-	//
-	// void DropWeapon();
+	 void EquipWeapon(AT7_Weapon* Weapon);
+	 void FireWeapon();
+
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Movement")
