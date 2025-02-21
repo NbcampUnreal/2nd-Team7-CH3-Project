@@ -45,6 +45,21 @@ void AT7_EnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus
 		{
 			EnemyBlackboard->SetValueAsBool(TEXT("IsDetected"), true);
 			EnemyBlackboard->SetValueAsObject(TEXT("TargetActor"), PlayerCharacter);
+
+			if (AT7_EnemyCharacter* EnemyCharacter = Cast<AT7_EnemyCharacter>(GetPawn()))
+			{
+				/*float WeaponRange = EnemyCharacter->GetCurrentWeapon()->GetRange();
+				float WeaponRangeSquared = WeaponRange * WeaponRange;
+				float DistSquare = Actor->GetSquaredDistanceTo(EnemyCharacter);
+				if (DistSquare <= WeaponRangeSquared)
+				{
+					EnemyBlackboard->SetValueAsBool(TEXT("IsInRange"), true);
+				}
+				else
+				{
+					EnemyBlackboard->SetValueAsBool(TEXT("IsInRange"), false);
+				}*/
+			}
 		}
 		else
 		{
