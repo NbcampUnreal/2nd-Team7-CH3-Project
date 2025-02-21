@@ -13,7 +13,9 @@ class TEAM7_API AT7_EnemyAIController : public AAIController
 	
 public:
 	virtual void OnPossess(APawn* InPawn) override;
-	virtual void BeginPlay() override;
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
+	TObjectPtr<UBehaviorTree> EnemyBehaviorTree;
 };
