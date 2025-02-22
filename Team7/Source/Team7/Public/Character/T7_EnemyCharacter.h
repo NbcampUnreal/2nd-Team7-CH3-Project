@@ -11,6 +11,5 @@ class TEAM7_API AT7_EnemyCharacter : public AT7_CharacterBase
 	
 public:
 	AT7_EnemyCharacter();
-	virtual void BeginPlay() override;
 
 };
