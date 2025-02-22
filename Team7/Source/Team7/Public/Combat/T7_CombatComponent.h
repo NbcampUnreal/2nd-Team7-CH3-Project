@@ -20,10 +20,11 @@ public:
 
 	void DropWeapon();
 
+	void SetHUDCrosshairs(float DeltaTime);
+
 protected:
 
 	virtual void BeginPlay() override;
-
 
 public:
 

@@ -16,6 +16,7 @@ class TEAM7_API AT7_Rifle : public AT7_Weapon
 public:
 
 
+	
 protected:
 	
 };

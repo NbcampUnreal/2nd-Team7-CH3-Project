@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+
 UT7_CombatComponent::UT7_CombatComponent()
 {
 
@@ -19,6 +20,8 @@ void UT7_CombatComponent::BeginPlay()
 
 	Character = Cast<AT7_PlayerCharacter>(GetOwner());
 }
+
+
 
 
 void UT7_CombatComponent::EquipWeapon(AT7_Weapon* WeaponToEquip)
@@ -53,4 +56,9 @@ void UT7_CombatComponent::DropWeapon()
 		EquippedWeapon->SetActorEnableCollision(true);
 		EquippedWeapon = nullptr;
 	}
+}
+
+void UT7_CombatComponent::SetHUDCrosshairs(float DeltaTime)
+{
+
 }

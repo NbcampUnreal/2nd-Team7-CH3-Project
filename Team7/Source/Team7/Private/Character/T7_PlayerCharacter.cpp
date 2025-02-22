@@ -139,7 +139,7 @@ void AT7_PlayerCharacter::StopAim()
 void AT7_PlayerCharacter::SwitchCamera()
 {
 	// Aim 이외에도 특정 키(지금은 T)를 눌렀을 때 시점 변환을 Toggle하기 위해 Input Bool 값으로 처리하지 않음.
-	if(bUseTPSCamera)
+	if (bUseTPSCamera)
 	{
 		TPSCameraComponent->SetActive(true);
 		FPSCameraComponent->SetActive(false);
@@ -153,7 +153,7 @@ void AT7_PlayerCharacter::SwitchCamera()
 		bUseControllerRotationPitch = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
-	// Toggle
+
 	bUseTPSCamera = !bUseTPSCamera;
 }
 

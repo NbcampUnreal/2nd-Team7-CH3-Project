@@ -28,8 +28,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// 총기 발사
-	UFUNCTION(BlueprintCallable)
-	void Fire();
+	UFUNCTION(BlueprintCallable)	
+	virtual void Fire();
 
 	void SetWeaponState(EWeaponState NewState);
 
@@ -40,12 +40,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-
 private:
-
-	//무기
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	USkeletalMeshComponent* WeaponMesh;
 
 	//충돌 감지(무기 획득)
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
@@ -55,15 +50,18 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	EWeaponState WeaponState;
 
-	// 무기 줍기 UI
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	class UWidgetComponent* PickupWidget;
-
 	// 탄환
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TSubclassOf<class AT7_Projectile> ProjectileClass;
 
-	
+	//무기
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	USkeletalMeshComponent* WeaponMesh;
+
+	// 무기 줍기 UI
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	class UWidgetComponent* PickupWidget;
+
 
 	// 발사 애니메이션 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
@@ -80,6 +78,23 @@ private:
 	UFUNCTION()
 	void OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	class UTexture2D* CrosshairsCenter;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsLeft;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsRight;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsTop;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsBottom;
+
+
 
 public:
 
