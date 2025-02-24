@@ -24,10 +24,13 @@ public:
 	AT7_Weapon* OverlappingWeapon = nullptr;
 
 protected:
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+
 	void PickupWeapon();
 	void DropWeapon();
+	void ReloadWeapon();
 
 	void StartSprint();
 	void StopSprint();
@@ -66,6 +69,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Input")
 	TObjectPtr<UInputAction> SwitchCameraAction = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Input")
+	TObjectPtr<UInputAction> ReloadAction = nullptr;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "T7|Camera")

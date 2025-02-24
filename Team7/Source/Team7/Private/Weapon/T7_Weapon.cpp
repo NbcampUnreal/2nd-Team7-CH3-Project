@@ -35,7 +35,10 @@ AT7_Weapon::AT7_Weapon()
 
     // 초기 상태 설정
     WeaponState = EWeaponState::EWS_Initial;
+    MaxAmmo = 30; // 최대 탄약 30발
+    Ammo = MaxAmmo; // 처음 시작할 때 30발
 
+    UE_LOG(LogTemp, Warning, TEXT("Weapon Spawned! Ammo: %d"), Ammo);
 }
 
 void AT7_Weapon::BeginPlay()
@@ -55,6 +58,19 @@ void AT7_Weapon::Tick(float DeltaTime)
 void AT7_Weapon::Fire()
 {
     if (GetOwner() == nullptr) return;
+
+    if (bIsReloading)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Cannot fire while reloading!"));
+        return;
+    }
+
+    if (!CanFire())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Out of Ammo! Reloading..."));
+        Reload();  // 자동 재장전 실행
+        return;
+    }
 
     APlayerController* PlayerController = Cast<APlayerController>(GetOwner()->GetInstigatorController());
     if (PlayerController == nullptr) return;
@@ -90,6 +106,46 @@ void AT7_Weapon::Fire()
     {
         WeaponMesh->PlayAnimation(FireAnimation, false);
     }
+
+    SpendRound();  
+}
+
+
+
+void AT7_Weapon::SpendRound()
+{
+    if (Ammo > 0)
+    {
+        --Ammo;
+        UE_LOG(LogTemp, Warning, TEXT("Ammo Remaining: %d"), Ammo); 
+    }
+}
+
+void AT7_Weapon::Reload()
+{
+    if (Ammo >= MaxAmmo)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Ammo is Full! No need to reload."));
+        return;
+    }
+
+    if (bIsReloading) return;
+
+    bIsReloading = true;
+    UE_LOG(LogTemp, Warning, TEXT("Reloading... Timer Started"));
+
+    GetWorldTimerManager().SetTimer(TimerHandle_Reload, this, &AT7_Weapon::FinishReload, 1.5f, false);
+
+    UE_LOG(LogTemp, Warning, TEXT("Timer Successfully Set!"));
+}
+
+
+
+void AT7_Weapon::FinishReload()
+{
+    Ammo = MaxAmmo; 
+    bIsReloading = false;
+    UE_LOG(LogTemp, Warning, TEXT("Reloaded! Ammo: %d"), Ammo);
 }
 
 
@@ -100,9 +156,11 @@ void AT7_Weapon::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
     if (PlayerCharacter)
     {
         PlayerCharacter->OverlappingWeapon = this;
-        PickupWidget->SetVisibility(true);  // UI 표시
+        PickupWidget->SetVisibility(true);  
+        UE_LOG(LogTemp, Warning, TEXT("Weapon Overlap Detected: %s"), *GetName());
     }
 }
+
 
 void AT7_Weapon::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

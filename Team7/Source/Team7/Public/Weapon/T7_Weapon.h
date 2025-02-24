@@ -36,6 +36,23 @@ public:
 	// 줍기 UI설정
 	void SetPickupWidgetVisibility(bool bVisible);
 
+	void Reload();
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	class UTexture2D* CrosshairsCenter;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsLeft;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsRight;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsTop;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsBottom;
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -67,6 +84,18 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	class UAnimationAsset* FireAnimation;
 
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	int32 Ammo;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	int32 MaxAmmo; // 최대 탄약 수
+
+	void SpendRound();
+
+	void FinishReload();
+
+	bool bIsReloading = false;
+	FTimerHandle TimerHandle_Reload;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Events")
 	FOnWeaponFired OnWeaponFired;
@@ -79,23 +108,8 @@ private:
 	void OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
-	UPROPERTY(EditAnywhere, Category = "Crosshairs")
-	class UTexture2D* CrosshairsCenter;
-
-	UPROPERTY(EditAnywhere, Category = "Crosshairs")
-	UTexture2D* CrosshairsLeft;
-
-	UPROPERTY(EditAnywhere, Category = "Crosshairs")
-	UTexture2D* CrosshairsRight;
-
-	UPROPERTY(EditAnywhere, Category = "Crosshairs")
-	UTexture2D* CrosshairsTop;
-
-	UPROPERTY(EditAnywhere, Category = "Crosshairs")
-	UTexture2D* CrosshairsBottom;
-
-
-
 public:
-
+	int32 GetAmmo() const { return Ammo; }
+	int32 GetMaxAmmo() const { return MaxAmmo; }
+	bool CanFire() const { return Ammo > 0; }
 };

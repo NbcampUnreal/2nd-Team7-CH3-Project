@@ -63,6 +63,9 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ThisClass::StopAim);
 		
 		EnhancedInputComponent->BindAction(SwitchCameraAction, ETriggerEvent::Completed, this, &ThisClass::SwitchCamera);
+
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &ThisClass::ReloadWeapon);
+
 	}
 }
 
@@ -112,6 +115,14 @@ void AT7_PlayerCharacter::PickupWeapon()
 void AT7_PlayerCharacter::DropWeapon()
 {
 	UE_LOG(LogTemp, Warning, TEXT("DropWeapon() 호출됨!"));
+}
+
+void AT7_PlayerCharacter::ReloadWeapon()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->Reload();
+	}
 }
 
 void AT7_PlayerCharacter::StartSprint()
