@@ -15,10 +15,4 @@ class TEAM7_API AT7_GameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 	AT7_GameModeBase();
-
-	UFUNCTION(BLueprintCallable, Category = "GameMode")
-	void StartGame();
-
-	UFUNCTION(BLueprintCallable, Category = "GameMode")
-	void EndGame();
 };

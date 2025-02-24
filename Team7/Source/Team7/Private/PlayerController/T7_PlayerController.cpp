@@ -2,17 +2,19 @@
 #include "Team7/Public/GameMode/T7_GameStateBase.h"
 #include "Blueprint/UserWidget.h"
 
+
 AT7_PlayerController::AT7_PlayerController()
-:HUDWidgetClass(nullptr),
- HUDWidgetInstance(nullptr)
+	:HUDWidgetClass(nullptr),
+	HUDWidgetInstance(nullptr)
 {
+	
 }
 
 void AT7_PlayerController::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
 
-    // HUD 위젯 생성 및 표시
+	// HUD 위젯 생성 및 표시
 	if (HUDWidgetClass)
 	{
 		HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);

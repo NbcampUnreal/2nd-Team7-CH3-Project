@@ -1,10 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "T7_CharacterBase.h"
+#include "Team7/Public/Character/T7_CharacterBase.h"
 #include "T7_PlayerCharacter.generated.h"
-
-class AT7_Weapon;
 
 class UInputMappingContext;
 class UCameraComponent;
@@ -17,7 +15,7 @@ UCLASS()
 class TEAM7_API AT7_PlayerCharacter : public AT7_CharacterBase
 {
 	GENERATED_BODY()
-
+	
 public:
 	AT7_PlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
@@ -25,31 +23,30 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "T7|Weapon")
 	AT7_Weapon* OverlappingWeapon = nullptr;
 
-	AT7_Weapon* GetCurrentWeapon() const { return CurrentWeapon; }
-	void SetCurrentWeapon(AT7_Weapon* NewWeapon) { CurrentWeapon = NewWeapon; }
-
-
-	// UI 테스트용으로 임시 생성함(임의 값 반환)
-	float GetCurrentHp() const;
-	float GetMaxHp() const;
-	int GetCurrentAmmo() const;
-	int GetMaxAmmo() const;
-	FString GetWeaponName();
-	
-
 protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void PickupWeapon();
-	void EquipWeapon(AT7_Weapon* Weapon);
 	void DropWeapon();
-	void FireWeapon();
 
 	void StartSprint();
 	void StopSprint();
 	void StartAim();
 	void StopAim();
 	void SwitchCamera();
+
+public:
+	// UI 테스트용으로 임시 생성함(임의 값 반환)
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	float GetCurrentHp() const;
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	float GetMaxHp() const;
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	int GetCurrentAmmo() const;
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	int GetMaxAmmo() const;
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	FString GetWeaponName();
 
 	// 전역적인 움직임(메뉴 이동 등)은 PlayerController의 SetupInputComponent()에서
 	// 플레이어 캐릭터의 움직임은 Character의 SetupPlayerInputComponent()에서 처리하는게 일반적

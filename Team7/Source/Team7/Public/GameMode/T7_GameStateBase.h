@@ -39,5 +39,8 @@ public:
 	UFUNCTION(BLueprintCallable, Category = "HUD")
 	void UpdateHUD();
 
+	UFUNCTION(BLueprintCallable, Category = "HUD")
+	void UpdateWeaponInfo(UTexture2D* NewWeaponTexture, FString WeaponName, int32 CurAmmo, int32 MaxAmmo);
+
 
 };

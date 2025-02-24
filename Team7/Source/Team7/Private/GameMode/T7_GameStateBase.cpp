@@ -5,6 +5,9 @@
 #include "Team7/Public/PlayerController/T7_PlayerController.h"
 #include "Team7/Public/Character/T7_PlayerCharacter.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
+#include "Engine/Texture2D.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Components/ProgressBar.h"
 #include "Blueprint/UserWidget.h"
 
@@ -68,14 +71,40 @@ void AT7_GameStateBase::UpdateHUD()
 				{
 					HpProgressBar->SetPercent(T7_PlayerCharacter->GetCurrentHp() / T7_PlayerCharacter->GetMaxHp());
 				}
-				if (UTextBlock* AmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_Ammo"))))
-				{
-					AmmoText->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), T7_PlayerCharacter->GetCurrentAmmo(), T7_PlayerCharacter->GetMaxAmmo())));
-				}
+			}
+		}
+	}
+}
 
+void AT7_GameStateBase::UpdateWeaponInfo(UTexture2D* NewWeaponTexture,FString WeaponName, int32 CurAmmo, int32 MaxAmmo)
+{
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		AT7_PlayerController* T7_PlayerController = Cast<AT7_PlayerController>(PlayerController);
+		{
+			if (UUserWidget* HUDWidget = T7_PlayerController->GetHUDWidget())
+			{
+				if (UImage* WeaponImage = Cast<UImage>(HUDWidget->GetWidgetFromName(TEXT("Image_Weapon"))))
+				{
+					if (UMaterialInstanceDynamic* DynamicMaterial = WeaponImage->GetDynamicMaterial())
+					{
+						if (NewWeaponTexture)
+						{
+							DynamicMaterial->SetTextureParameterValue(TEXT("Image"), NewWeaponTexture);
+						}
+					}
+				}
 				if (UTextBlock* WeaponText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_Weapon"))))
 				{
-					WeaponText->SetText(FText::FromString(T7_PlayerCharacter->GetWeaponName()));
+					WeaponText->SetText(FText::FromString(WeaponName));
+				}
+				if (UTextBlock* CurAmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_CurAmmo"))))
+				{
+					CurAmmoText->SetText(FText::FromString(FString::Printf(TEXT("%d"), CurAmmo)));
+				}
+				if (UTextBlock* MaxAmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_MaxAmmo"))))
+				{
+					MaxAmmoText->SetText(FText::FromString(FString::Printf(TEXT("%d"), MaxAmmo)));
 				}
 			}
 		}

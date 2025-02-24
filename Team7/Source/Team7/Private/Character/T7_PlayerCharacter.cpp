@@ -1,11 +1,11 @@
 ﻿#include "Team7/Public/Character/T7_PlayerCharacter.h"
+#include "Team7/Public/Combat/T7_CombatComponent.h"
+#include "Team7/Public/Weapon/T7_Weapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Weapon/T7_Weapon.h"
-#include "Combat/T7_CombatComponent.h"
 
 AT7_PlayerCharacter::AT7_PlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -88,11 +88,11 @@ int AT7_PlayerCharacter::GetMaxAmmo() const
 
 FString AT7_PlayerCharacter::GetWeaponName()
 {
-	if (CurrentWeapon != nullptr)
+	/*if (CurrentWeapon != nullptr)
 	{
 		return CurrentWeapon->GetName();
 	}
-	else return FString::Printf(TEXT(""));
+	else */return FString::Printf(TEXT(""));
 }
 
 void AT7_PlayerCharacter::Move(const FInputActionValue& Value)
@@ -126,21 +126,22 @@ void AT7_PlayerCharacter::Look(const FInputActionValue& Value)
 //  무기 줍기 실행 (E키)
 void AT7_PlayerCharacter::PickupWeapon()
 {
-    if (CombatComponent && OverlappingWeapon)
-    {
-        OverlappingWeapon->SetPickupWidgetVisibility(false);
+	if (CombatComponent && OverlappingWeapon)
+	{
+		OverlappingWeapon->SetPickupWidgetVisibility(false);
 
-        // CombatComponent를 통해 무기 장착
-        CombatComponent->EquipWeapon(OverlappingWeapon);
+		CombatComponent->EquipWeapon(OverlappingWeapon);
 
-        // 현재 무기 설정 (중요!)
-        CurrentWeapon = OverlappingWeapon;
+		SetCurrentWeapon(OverlappingWeapon);
 
-        // 줍기 가능한 무기 초기화
-        OverlappingWeapon = nullptr;
-    }
+		OverlappingWeapon = nullptr;
+	}
 }
 
+void AT7_PlayerCharacter::DropWeapon()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DropWeapon() 호출됨!"));
+}
 
 void AT7_PlayerCharacter::StartSprint()
 {
@@ -208,17 +209,3 @@ void AT7_PlayerCharacter::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComp
 	}
 }
 
-void AT7_PlayerCharacter::FireWeapon()
-{
-	UE_LOG(LogTemp, Warning, TEXT("FireWeapon() 호출됨!"));
-
-	if (CurrentWeapon)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("현재 무기 있음 -> 무기 발사"));
-		CurrentWeapon->Fire();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("현재 무기 없음!"));
-	}
-}
