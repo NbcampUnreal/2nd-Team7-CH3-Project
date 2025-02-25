@@ -1,0 +1,107 @@
+#include "System/T7_GameStateBase.h"
+#include "Team7/Public/PlayerController/T7_PlayerController.h"
+#include "Team7/Public/Character/T7_PlayerCharacter.h"
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
+#include "Engine/Texture2D.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Components/ProgressBar.h"
+#include "Blueprint/UserWidget.h"
+
+AT7_PlayerCharacter* T7_PlayerCharacter;
+
+AT7_GameStateBase::AT7_GameStateBase()
+{
+
+}
+
+void AT7_GameStateBase::BeginPlay()
+{
+	UpdateHUD();
+}
+
+int32 AT7_GameStateBase::GetScore() const
+{
+	return Score;
+}
+
+void AT7_GameStateBase::AddScore(int32 Amount)
+{
+	Score += Amount;
+	UpdateHUD();
+}
+
+int32 AT7_GameStateBase::GetKill() const
+{
+	return Kill;
+}
+
+void AT7_GameStateBase::AddKill(int32 Amount)
+{
+	Kill += Amount;
+	UpdateHUD();
+}
+
+void AT7_GameStateBase::UpdateHUD()
+{
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		AT7_PlayerController* T7_PlayerController = Cast<AT7_PlayerController>(PlayerController);
+		{
+			if (UUserWidget* HUDWidget = T7_PlayerController->GetHUDWidget())
+			{
+				if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_Score"))))
+				{
+					ScoreText->SetText(FText::FromString(FString::Printf(TEXT("Score: %d"), Score)));
+				}
+				if (UTextBlock* KillText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_Kill"))))
+				{
+					KillText->SetText(FText::FromString(FString::Printf(TEXT("Kill: %d"), Kill)));
+				}
+				if (UTextBlock* HpText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_Hp"))))
+				{
+					HpText->SetText(FText::FromString(FString::Printf(TEXT("%.0f/%.0f"), T7_PlayerCharacter->GetCurrentHP(), T7_PlayerCharacter->GetMaxHP())));
+				}
+				if (UProgressBar* HpProgressBar = Cast<UProgressBar>(HUDWidget->GetWidgetFromName(TEXT("ProgressBar_Hp"))))
+				{
+					HpProgressBar->SetPercent(T7_PlayerCharacter->GetCurrentHP() / T7_PlayerCharacter->GetMaxHP());
+				}
+			}
+		}
+	}
+}
+
+void AT7_GameStateBase::UpdateWeaponInfo(UTexture2D* NewWeaponTexture, FString WeaponName, int32 CurAmmo, int32 MaxAmmo)
+{
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		AT7_PlayerController* T7_PlayerController = Cast<AT7_PlayerController>(PlayerController);
+		{
+			if (UUserWidget* HUDWidget = T7_PlayerController->GetHUDWidget())
+			{
+				if (UImage* WeaponImage = Cast<UImage>(HUDWidget->GetWidgetFromName(TEXT("Image_Weapon"))))
+				{
+					if (UMaterialInstanceDynamic* DynamicMaterial = WeaponImage->GetDynamicMaterial())
+					{
+						if (NewWeaponTexture)
+						{
+							DynamicMaterial->SetTextureParameterValue(TEXT("Image"), NewWeaponTexture);
+						}
+					}
+				}
+				if (UTextBlock* WeaponText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_Weapon"))))
+				{
+					WeaponText->SetText(FText::FromString(WeaponName));
+				}
+				if (UTextBlock* CurAmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_CurAmmo"))))
+				{
+					CurAmmoText->SetText(FText::FromString(FString::Printf(TEXT("%d"), CurAmmo)));
+				}
+				if (UTextBlock* MaxAmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_MaxAmmo"))))
+				{
+					MaxAmmoText->SetText(FText::FromString(FString::Printf(TEXT("%d"), MaxAmmo)));
+				}
+			}
+		}
+	}
+}
