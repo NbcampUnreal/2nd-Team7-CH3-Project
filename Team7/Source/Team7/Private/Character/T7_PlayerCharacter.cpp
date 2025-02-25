@@ -69,6 +69,36 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	}
 }
 
+
+float AT7_PlayerCharacter::GetCurrentHp() const
+{
+	return 50.0f;
+}
+
+float AT7_PlayerCharacter::GetMaxHp() const
+{
+	return 100.0f;
+}
+
+int AT7_PlayerCharacter::GetCurrentAmmo() const
+{
+	return 5;
+}
+
+int AT7_PlayerCharacter::GetMaxAmmo() const
+{
+	return 30;
+}
+
+FString AT7_PlayerCharacter::GetWeaponName()
+{
+	/*if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon->GetName();
+	}
+	else */return FString::Printf(TEXT(""));
+}
+
 void AT7_PlayerCharacter::Move(const FInputActionValue& Value)
 {
 	if (!Controller)
@@ -150,7 +180,7 @@ void AT7_PlayerCharacter::StopAim()
 void AT7_PlayerCharacter::SwitchCamera()
 {
 	// Aim 이외에도 특정 키(지금은 T)를 눌렀을 때 시점 변환을 Toggle하기 위해 Input Bool 값으로 처리하지 않음.
-	if (bUseTPSCamera)
+	if(bUseTPSCamera)
 	{
 		TPSCameraComponent->SetActive(true);
 		FPSCameraComponent->SetActive(false);
@@ -165,6 +195,7 @@ void AT7_PlayerCharacter::SwitchCamera()
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
 
+	// Toggle
 	bUseTPSCamera = !bUseTPSCamera;
 }
 

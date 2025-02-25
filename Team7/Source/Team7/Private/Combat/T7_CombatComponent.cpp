@@ -9,6 +9,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Engine/SkeletalMeshSocket.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UT7_CombatComponent::UT7_CombatComponent()
 {
@@ -23,11 +26,12 @@ void UT7_CombatComponent::BeginPlay()
 	Character = Cast<AT7_PlayerCharacter>(GetOwner());
 }
 
+
 void UT7_CombatComponent::EquipWeapon(AT7_Weapon* WeaponToEquip)
 {
     if (Character == nullptr || WeaponToEquip == nullptr) return;
 
-    // ±âÁ¸ ¹«±â ¹ö¸®±â
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     DropWeapon();
 
     EquippedWeapon = WeaponToEquip;
@@ -39,7 +43,7 @@ void UT7_CombatComponent::EquipWeapon(AT7_Weapon* WeaponToEquip)
         HandSocket->AttachActor(EquippedWeapon, Character->GetMesh());
     }
 
-    // ¹«±â ¼ÒÀ¯ÀÚ ¼³Á¤
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     EquippedWeapon->SetOwner(Character);
     Character->GetCharacterMovement()->bOrientRotationToMovement = false;
     Character->bUseControllerRotationYaw = true;
@@ -95,3 +99,4 @@ void UT7_CombatComponent::SetHUDCrosshairs(float DeltaTime)
 		}
 	}
 }
+

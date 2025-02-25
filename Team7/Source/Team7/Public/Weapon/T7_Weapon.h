@@ -4,7 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "T7_Weapon.generated.h"
 
-// ÃÑ±â ¹ß»ç µ¨¸®°ÔÀÌÆ®
+// ï¿½Ñ±ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponFired);
 
 UENUM(BlueprintType)
@@ -27,13 +27,13 @@ public:
 	AT7_Weapon();
 	virtual void Tick(float DeltaTime) override;
 
-	// ÃÑ±â ¹ß»ç
+	// ï¿½Ñ±ï¿½ ï¿½ß»ï¿½
 	UFUNCTION(BlueprintCallable)	
 	virtual void Fire();
 
 	void SetWeaponState(EWeaponState NewState);
 
-	// ÁÝ±â UI¼³Á¤
+	// ï¿½Ý±ï¿½ UIï¿½ï¿½ï¿½ï¿½
 	void SetPickupWidgetVisibility(bool bVisible);
 
 	void Reload();
@@ -59,11 +59,11 @@ protected:
 
 private:
 
-	//Ãæµ¹ °¨Áö(¹«±â È¹µæ)
+	//ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ È¹ï¿½ï¿½)
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	class USphereComponent* PickupTrigger;
 
-	// ÇöÀç ¹«±â
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	EWeaponState WeaponState;
 
@@ -71,16 +71,16 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TSubclassOf<class AT7_Projectile> ProjectileClass;
 
-	//¹«±â
+	//ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	USkeletalMeshComponent* WeaponMesh;
 
-	// ¹«±â ÁÝ±â UI
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ý±ï¿½ UI
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	class UWidgetComponent* PickupWidget;
 
 
-	// ¹ß»ç ¾Ö´Ï¸ÞÀÌ¼Ç 
+	// ï¿½ß»ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	class UAnimationAsset* FireAnimation;
 
@@ -88,7 +88,7 @@ private:
 	int32 Ammo;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	int32 MaxAmmo; // ÃÖ´ë Åº¾à ¼ö
+	int32 MaxAmmo; // ï¿½Ö´ï¿½ Åºï¿½ï¿½ ï¿½ï¿½
 
 	void SpendRound();
 

@@ -38,6 +38,19 @@ protected:
 	void StopAim();
 	void SwitchCamera();
 
+public:
+	// UI 테스트용으로 임시 생성함(임의 값 반환)
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	float GetCurrentHp() const;
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	float GetMaxHp() const;
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	int GetCurrentAmmo() const;
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	int GetMaxAmmo() const;
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	FString GetWeaponName();
+
 	// 전역적인 움직임(메뉴 이동 등)은 PlayerController의 SetupInputComponent()에서
 	// 플레이어 캐릭터의 움직임은 Character의 SetupPlayerInputComponent()에서 처리하는게 일반적
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;

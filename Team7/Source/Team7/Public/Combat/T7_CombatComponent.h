@@ -7,6 +7,7 @@
 class AT7_Weapon;
 class AT7_PlayerCharacter;
 class AT7_WeaponHUD;
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class TEAM7_API UT7_CombatComponent : public UActorComponent
 {
@@ -32,6 +33,7 @@ private:
 protected:
 
 	virtual void BeginPlay() override;
+
 
 public:
 

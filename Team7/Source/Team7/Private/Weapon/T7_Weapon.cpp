@@ -33,10 +33,10 @@ AT7_Weapon::AT7_Weapon()
     PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
     PickupWidget->SetupAttachment(RootComponent);
 
-    // ÃÊ±â »óÅÂ ¼³Á¤
+    // ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     WeaponState = EWeaponState::EWS_Initial;
-    MaxAmmo = 30; // ÃÖ´ë Åº¾à 30¹ß
-    Ammo = MaxAmmo; // Ã³À½ ½ÃÀÛÇÒ ¶§ 30¹ß
+    MaxAmmo = 30; 
+    Ammo = MaxAmmo;
 
     UE_LOG(LogTemp, Warning, TEXT("Weapon Spawned! Ammo: %d"), Ammo);
 }
@@ -68,7 +68,7 @@ void AT7_Weapon::Fire()
     if (!CanFire())
     {
         UE_LOG(LogTemp, Warning, TEXT("Out of Ammo! Reloading..."));
-        Reload();  // ÀÚµ¿ ÀçÀåÀü ½ÇÇà
+        Reload();  // ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         return;
     }
 
@@ -158,9 +158,13 @@ void AT7_Weapon::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
         PlayerCharacter->OverlappingWeapon = this;
         PickupWidget->SetVisibility(true);  
         UE_LOG(LogTemp, Warning, TEXT("Weapon Overlap Detected: %s"), *GetName());
+    
+
+
+
+        PickupWidget->SetVisibility(true);  // UI Ç¥ï¿½ï¿½
     }
 }
-
 
 void AT7_Weapon::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -168,8 +172,8 @@ void AT7_Weapon::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AA
     AT7_PlayerCharacter* PlayerCharacter = Cast<AT7_PlayerCharacter>(OtherActor);
     if (PlayerCharacter && PlayerCharacter->OverlappingWeapon == this)
     {
-        PlayerCharacter->OverlappingWeapon = nullptr;  // ÁÝ±â ÇØÁ¦
-        PickupWidget->SetVisibility(false);  // UI ¼û±è
+        PlayerCharacter->OverlappingWeapon = nullptr;  // ï¿½Ý±ï¿½ ï¿½ï¿½ï¿½ï¿½
+        PickupWidget->SetVisibility(false);  // UI ï¿½ï¿½ï¿½ï¿½
     }
 }
 
