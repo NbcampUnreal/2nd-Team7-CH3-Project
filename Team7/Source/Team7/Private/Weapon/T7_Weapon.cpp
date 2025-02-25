@@ -9,6 +9,7 @@
 #include "Animation/AnimationAsset.h"
 #include "Team7/Public/Character/T7_PlayerCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Team7/Public/GameMode/T7_GameStateBase.h"
 
 AT7_Weapon::AT7_Weapon()
 {
@@ -33,7 +34,6 @@ AT7_Weapon::AT7_Weapon()
     PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
     PickupWidget->SetupAttachment(RootComponent);
 
-    // �ʱ� ���� ����
     WeaponState = EWeaponState::EWS_Initial;
     MaxAmmo = 30; 
     Ammo = MaxAmmo;
@@ -68,7 +68,7 @@ void AT7_Weapon::Fire()
     if (!CanFire())
     {
         UE_LOG(LogTemp, Warning, TEXT("Out of Ammo! Reloading..."));
-        Reload();  // �ڵ� ������ ����
+        Reload();
         return;
     }
 
@@ -107,8 +107,11 @@ void AT7_Weapon::Fire()
         WeaponMesh->PlayAnimation(FireAnimation, false);
     }
 
-    SpendRound();  
+    SpendRound();  // 총알 소비
+
+    UpdateAmmoHUD();
 }
+
 
 
 
@@ -139,15 +142,23 @@ void AT7_Weapon::Reload()
     UE_LOG(LogTemp, Warning, TEXT("Timer Successfully Set!"));
 }
 
-
-
 void AT7_Weapon::FinishReload()
 {
-    Ammo = MaxAmmo; 
+    Ammo = MaxAmmo;
     bIsReloading = false;
     UE_LOG(LogTemp, Warning, TEXT("Reloaded! Ammo: %d"), Ammo);
+
+    UpdateAmmoHUD();
 }
 
+void AT7_Weapon::UpdateAmmoHUD()
+{
+    AT7_GameStateBase* GameState = GetWorld() ? GetWorld()->GetGameState<AT7_GameStateBase>() : nullptr;
+    if (GameState)
+    {
+        GameState->UpdateWeaponInfo(WeaponIcon, WeaponName, Ammo, MaxAmmo);
+    }
+}
 
 void AT7_Weapon::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -156,13 +167,9 @@ void AT7_Weapon::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
     if (PlayerCharacter)
     {
         PlayerCharacter->OverlappingWeapon = this;
-        PickupWidget->SetVisibility(true);  
-        UE_LOG(LogTemp, Warning, TEXT("Weapon Overlap Detected: %s"), *GetName());
-    
+        PickupWidget->SetVisibility(true);
 
-
-
-        PickupWidget->SetVisibility(true);  // UI ǥ��
+        UpdateAmmoHUD();
     }
 }
 
@@ -172,8 +179,14 @@ void AT7_Weapon::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AA
     AT7_PlayerCharacter* PlayerCharacter = Cast<AT7_PlayerCharacter>(OtherActor);
     if (PlayerCharacter && PlayerCharacter->OverlappingWeapon == this)
     {
-        PlayerCharacter->OverlappingWeapon = nullptr;  // �ݱ� ����
-        PickupWidget->SetVisibility(false);  // UI ����
+        PlayerCharacter->OverlappingWeapon = nullptr;
+        PickupWidget->SetVisibility(false);
+
+        AT7_GameStateBase* GameState = GetWorld() ? GetWorld()->GetGameState<AT7_GameStateBase>() : nullptr;
+        if (GameState)
+        {
+            GameState->UpdateWeaponInfo(nullptr, TEXT(""), 0, 0);  // UI 숨김
+        }
     }
 }
 

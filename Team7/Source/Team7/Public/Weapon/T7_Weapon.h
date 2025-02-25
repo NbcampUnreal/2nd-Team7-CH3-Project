@@ -4,7 +4,6 @@
 #include "GameFramework/Actor.h"
 #include "T7_Weapon.generated.h"
 
-// �ѱ� �߻� ��������Ʈ
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponFired);
 
 UENUM(BlueprintType)
@@ -27,16 +26,8 @@ public:
 	AT7_Weapon();
 	virtual void Tick(float DeltaTime) override;
 
-	// �ѱ� �߻�
 	UFUNCTION(BlueprintCallable)	
 	virtual void Fire();
-
-	void SetWeaponState(EWeaponState NewState);
-
-	// �ݱ� UI����
-	void SetPickupWidgetVisibility(bool bVisible);
-
-	void Reload();
 
 	UPROPERTY(EditAnywhere, Category = "Crosshairs")
 	class UTexture2D* CrosshairsCenter;
@@ -53,46 +44,44 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Crosshairs")
 	UTexture2D* CrosshairsBottom;
 
+	UPROPERTY(EditAnywhere, Category = "Weapon Info")
+	FString WeaponName;  // 무기 이름
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Info")
+	UTexture2D* WeaponIcon;  // 무기 아이콘 이미지
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Ammo")
+	int32 MaxAmmo;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Ammo")
+	int32 Ammo;
+
+
 protected:
 
 	virtual void BeginPlay() override;
 
 private:
 
-	//�浹 ����(���� ȹ��)
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	class USphereComponent* PickupTrigger;
 
-	// ���� ����
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	EWeaponState WeaponState;
 
-	// źȯ
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TSubclassOf<class AT7_Projectile> ProjectileClass;
 
-	//����
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	USkeletalMeshComponent* WeaponMesh;
 
-	// ���� �ݱ� UI
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	class UWidgetComponent* PickupWidget;
 
-
-	// �߻� �ִϸ��̼� 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	class UAnimationAsset* FireAnimation;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	int32 Ammo;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	int32 MaxAmmo; // �ִ� ź�� ��
-
-	void SpendRound();
-
-	void FinishReload();
 
 	bool bIsReloading = false;
 	FTimerHandle TimerHandle_Reload;
@@ -109,7 +98,21 @@ private:
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
 public:
+
 	int32 GetAmmo() const { return Ammo; }
 	int32 GetMaxAmmo() const { return MaxAmmo; }
 	bool CanFire() const { return Ammo > 0; }
+
+	void UpdateAmmoHUD();
+	void SetWeaponState(EWeaponState NewState);
+
+	void SetPickupWidgetVisibility(bool bVisible);
+
+	void Reload();
+private:
+
+	void SpendRound();
+
+	void FinishReload();
+
 };

@@ -29,25 +29,22 @@ void UT7_CombatComponent::BeginPlay()
 
 void UT7_CombatComponent::EquipWeapon(AT7_Weapon* WeaponToEquip)
 {
-    if (Character == nullptr || WeaponToEquip == nullptr) return;
+	if (Character == nullptr || WeaponToEquip == nullptr) return;
 
-    // ���� ���� ������
-    DropWeapon();
+	DropWeapon();  // 기존 무기 버리기
 
-    EquippedWeapon = WeaponToEquip;
-    EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
+	EquippedWeapon = WeaponToEquip;
+	EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
 
-    const USkeletalMeshSocket* HandSocket = Character->GetMesh()->GetSocketByName(FName("RightHandSocket"));
-    if (HandSocket)
-    {
-        HandSocket->AttachActor(EquippedWeapon, Character->GetMesh());
-    }
+	const USkeletalMeshSocket* HandSocket = Character->GetMesh()->GetSocketByName(FName("RightHandSocket"));
+	if (HandSocket)
+	{
+		HandSocket->AttachActor(EquippedWeapon, Character->GetMesh());
+	}
 
-    // ���� ������ ����
-    EquippedWeapon->SetOwner(Character);
-    Character->GetCharacterMovement()->bOrientRotationToMovement = false;
-    Character->bUseControllerRotationYaw = true;
-    Character->SetCurrentWeapon(EquippedWeapon);  
+	EquippedWeapon->SetOwner(Character);
+	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+	Character->bUseControllerRotationYaw = true;
 }
 
 

@@ -22,8 +22,28 @@ AT7_GameStateBase::AT7_GameStateBase()
 
 void AT7_GameStateBase::BeginPlay()
 {
-	UpdateHUD();
+    Super::BeginPlay();
+
+    // 게임 시작 시 HUD 숨기기
+    if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+    {
+        AT7_PlayerController* T7_PlayerController = Cast<AT7_PlayerController>(PlayerController);
+        if (T7_PlayerController)
+        {
+            if (UUserWidget* HUDWidget = T7_PlayerController->GetHUDWidget())
+            {
+                UWidget* WeaponUIPanel = HUDWidget->GetWidgetFromName(TEXT("WeaponUIPanel"));
+                if (WeaponUIPanel)
+                {
+                    WeaponUIPanel->SetVisibility(ESlateVisibility::Hidden);
+                }
+            }
+        }
+    }
+
+    UpdateHUD();
 }
+
 
 int32 AT7_GameStateBase::GetScore() const
 {
@@ -76,37 +96,48 @@ void AT7_GameStateBase::UpdateHUD()
 	}
 }
 
-void AT7_GameStateBase::UpdateWeaponInfo(UTexture2D* NewWeaponTexture,FString WeaponName, int32 CurAmmo, int32 MaxAmmo)
+void AT7_GameStateBase::UpdateWeaponInfo(UTexture2D* NewWeaponTexture, FString WeaponName, int32 CurAmmo, int32 MaxAmmo)
 {
-	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
-	{
-		AT7_PlayerController* T7_PlayerController = Cast<AT7_PlayerController>(PlayerController);
-		{
-			if (UUserWidget* HUDWidget = T7_PlayerController->GetHUDWidget())
-			{
-				if (UImage* WeaponImage = Cast<UImage>(HUDWidget->GetWidgetFromName(TEXT("Image_Weapon"))))
-				{
-					if (UMaterialInstanceDynamic* DynamicMaterial = WeaponImage->GetDynamicMaterial())
-					{
-						if (NewWeaponTexture)
-						{
-							DynamicMaterial->SetTextureParameterValue(TEXT("Image"), NewWeaponTexture);
-						}
-					}
-				}
-				if (UTextBlock* WeaponText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_Weapon"))))
-				{
-					WeaponText->SetText(FText::FromString(WeaponName));
-				}
-				if (UTextBlock* CurAmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_CurAmmo"))))
-				{
-					CurAmmoText->SetText(FText::FromString(FString::Printf(TEXT("%d"), CurAmmo)));
-				}
-				if (UTextBlock* MaxAmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_MaxAmmo"))))
-				{
-					MaxAmmoText->SetText(FText::FromString(FString::Printf(TEXT("%d"), MaxAmmo)));
-				}
-			}
-		}
-	}
+    if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+    {
+        AT7_PlayerController* T7_PlayerController = Cast<AT7_PlayerController>(PlayerController);
+        if (T7_PlayerController)
+        {
+            if (UUserWidget* HUDWidget = T7_PlayerController->GetHUDWidget())
+            {
+                // 무기 UI 패널 찾기 (이름은 HUD 위젯에서 설정한 이름과 동일해야 함)
+                UWidget* WeaponUIPanel = HUDWidget->GetWidgetFromName(TEXT("WeaponUIPanel"));
+
+                if (WeaponUIPanel)
+                {
+                    bool bShouldShow = (CurAmmo > 0 || MaxAmmo > 0);
+                    WeaponUIPanel->SetVisibility(bShouldShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+                }
+
+                if (UImage* WeaponImage = Cast<UImage>(HUDWidget->GetWidgetFromName(TEXT("Image_Weapon"))))
+                {
+                    if (NewWeaponTexture)
+                    {
+                        WeaponImage->SetBrushFromTexture(NewWeaponTexture);
+                    }
+                }
+
+                if (UTextBlock* WeaponText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_Weapon"))))
+                {
+                    WeaponText->SetText(FText::FromString(WeaponName));
+                }
+
+                if (UTextBlock* CurAmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_CurAmmo"))))
+                {
+                    CurAmmoText->SetText(FText::FromString(FString::Printf(TEXT("%d"), CurAmmo)));
+                }
+
+                if (UTextBlock* MaxAmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Text_MaxAmmo"))))
+                {
+                    MaxAmmoText->SetText(FText::FromString(FString::Printf(TEXT("%d"), MaxAmmo)));
+                }
+            }
+        }
+    }
 }
+

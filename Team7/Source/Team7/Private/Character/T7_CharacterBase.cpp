@@ -11,8 +11,26 @@ AT7_CharacterBase::AT7_CharacterBase(const FObjectInitializer& ObjectInitializer
 
 void AT7_CharacterBase::EquipWeapon(AT7_Weapon* Weapon)
 {
-	UE_LOG(LogTemp, Warning, TEXT("EquipWeapon() 호출됨!"));
-	CurrentWeapon = Weapon;
+    if (Weapon == nullptr || CombatComponent == nullptr) return;
+
+    UE_LOG(LogTemp, Warning, TEXT("EquipWeapon() 호출됨! 장착 무기: %s"), *Weapon->GetName());
+
+    CombatComponent->EquipWeapon(Weapon);  
+    CurrentWeapon = Weapon;
+
+    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+    {
+        AT7_GameStateBase* GameState = PC->GetWorld()->GetGameState<AT7_GameStateBase>();
+        if (GameState)
+        {
+            GameState->UpdateWeaponInfo(
+                Weapon->WeaponIcon,  // 무기 아이콘
+                Weapon->WeaponName,  // 무기 이름
+                Weapon->GetAmmo(),   // 현재 탄약
+                Weapon->GetMaxAmmo() // 최대 탄약
+            );
+        }
+    }
 }
 
 void AT7_CharacterBase::FireWeapon()
