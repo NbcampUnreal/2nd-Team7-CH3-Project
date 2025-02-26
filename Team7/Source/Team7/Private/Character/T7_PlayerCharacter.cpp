@@ -112,6 +112,11 @@ FString AT7_PlayerCharacter::GetWeaponName()
 		return CurrentWeapon->GetName();
 	}
 	else */return FString::Printf(TEXT(""));
+void AT7_PlayerCharacter::Dead()
+{
+	Super::Dead();
+	// TODO: Player가 죽은 경우는 GameOver 처리
+	
 }
 
 void AT7_PlayerCharacter::Move(const FInputActionValue& Value)
