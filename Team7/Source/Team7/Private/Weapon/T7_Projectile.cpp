@@ -13,7 +13,9 @@ AT7_Projectile::AT7_Projectile()
 	CollisionBox->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	CollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	//이러면 EnemyCharacter(ECC_Pawn)에 닿았을때 OnHit() 불리지 않음
+	//CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
@@ -41,10 +43,24 @@ void AT7_Projectile::Tick(float DeltaTime)
 void AT7_Projectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// �ڱ� �ڽŰ� �浹�� ��� ����
+	// �ڱ� �ڽŰ� �浹�� ��� ����
 	if (OtherActor == nullptr || OtherActor == this) return;
 
-	UGameplayStatics::ApplyDamage(OtherActor, 20.0f, GetInstigatorController(), this, UDamageType::StaticClass());
+	const float Damage = 20.0f;
+
+	// GetCurrentWeapon()이 NULL임
+	// PlayerCharacter의 OverlappingWeapon과 CharacterBase의 CurrentWeapon를 합치는게? 
+	
+	//float Damage = 0.0f;
+	// if (const AT7_CharacterBase* Character = Cast<AT7_CharacterBase>(OtherActor))
+	// {
+	// 	if (const AT7_Weapon* Weapon = Character->GetCurrentWeapon())
+	// 	{
+	// 		Damage = Weapon->GetDamage();	
+	// 	}
+	// }
+	
+	UGameplayStatics::ApplyDamage(OtherActor, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
 
 	Destroy();
 }
