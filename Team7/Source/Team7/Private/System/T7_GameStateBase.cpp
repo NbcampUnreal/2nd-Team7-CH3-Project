@@ -1,10 +1,12 @@
 #include "System/T7_GameStateBase.h"
 #include "Team7/Public/PlayerController/T7_PlayerController.h"
 #include "Team7/Public/Character/T7_PlayerCharacter.h"
+#include "Team7/Public/Character/T7_CharacterBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/HorizontalBox.h"
+#include "Components/VerticalBox.h"
 #include "Components/ProgressBar.h"
 #include "Engine/Texture2D.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -36,9 +38,10 @@ int32 AT7_GameStateBase::GetKill() const
 	return Kill;
 }
 
-void AT7_GameStateBase::AddKill(int32 Amount)
+void AT7_GameStateBase::AddKill(int32 Amount, AT7_CharacterBase* Enemy)
 {
 	Kill += Amount;
+	AddKillLog(Enemy);
 	UpdateHUD();
 }
 
@@ -112,6 +115,52 @@ void AT7_GameStateBase::UpdateWeaponInfo(UTexture2D* NewWeaponTexture, FString W
 			}
 		}
 	}
+}
+
+void AT7_GameStateBase::AddKillLog(AT7_CharacterBase* Enemy)
+{
+	FText PlayerName = FText::FromString(TEXT("Legend"));
+	//FText EnemyName = FText::FromName(Enemy->GetName());
+	FText EnemyName = FText::FromString(TEXT("Newbie"));
+
+	if (AT7_PlayerCharacter* PlayerCharacter = GetT7Character())
+	{
+		//PlayerCharacter->GetCurrentWeapon()->GetWeaponImage();
+		PlayerName = FText::FromString(PlayerCharacter->GetName());
+	}
+
+	if (AT7_PlayerController* PlayerController = GetT7Controller())
+	{
+		if (UUserWidget* HUDWidget = PlayerController->GetHUDWidget())
+		{
+			if (UVerticalBox* KillLogBox = Cast<UVerticalBox>(HUDWidget->GetWidgetFromName(TEXT("KillLogBox"))))
+			{
+				if (UUserWidget* KillLog = PlayerController->CreateKillLogWidget())
+				{
+					if (UTextBlock* PlayerText = Cast<UTextBlock>(KillLog->GetWidgetFromName(TEXT("PlayerName"))))
+					{
+						PlayerText->SetText(PlayerName);
+					}
+					if (UTextBlock* EnemyText = Cast<UTextBlock>(KillLog->GetWidgetFromName(TEXT("EnemyName"))))
+					{
+						EnemyText->SetText(EnemyName);
+					}
+					if (UImage* WeaponImage = Cast<UImage>(KillLog->GetWidgetFromName(TEXT("Image_Weapon"))))
+					{
+						if (UMaterialInstanceDynamic* DynamicMaterial = WeaponImage->GetDynamicMaterial())
+						{
+							/*if (NewWeaponTexture)
+							{
+								DynamicMaterial->SetTextureParameterValue(TEXT("Image"), NewWeaponTexture);
+							}*/
+						}
+					}
+					KillLogBox->AddChild(KillLog);
+				}
+			}
+		}
+	}
+	
 }
 
 AT7_PlayerController* AT7_GameStateBase::GetT7Controller()

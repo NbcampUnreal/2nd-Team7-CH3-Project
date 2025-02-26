@@ -15,6 +15,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UI")
 	UUserWidget* GetHUDWidget() const;
 
+	UFUNCTION(BlueprintPure, Category = "UI")
+	UUserWidget* CreateKillLogWidget();
+
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowHUDWidget();
 
@@ -29,9 +32,13 @@ public:
 	TSubclassOf<UUserWidget> HUDWidgetClass = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> KillLogWidgetClass = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> MainMenuWidgetClass = nullptr;
 
-	UUserWidget* MainMenuWidgetInstance = nullptr;
 	UUserWidget* HUDWidgetInstance = nullptr;
+	UUserWidget* KillLogWidgetInstance = nullptr;
+	UUserWidget* MainMenuWidgetInstance = nullptr;
 
 };
