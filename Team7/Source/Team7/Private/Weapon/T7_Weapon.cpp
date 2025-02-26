@@ -9,7 +9,7 @@
 #include "Animation/AnimationAsset.h"
 #include "Team7/Public/Character/T7_PlayerCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Team7/Public/GameMode/T7_GameStateBase.h"
+#include "Team7/Public/System/T7_GameStateBase.h"
 
 AT7_Weapon::AT7_Weapon()
 {

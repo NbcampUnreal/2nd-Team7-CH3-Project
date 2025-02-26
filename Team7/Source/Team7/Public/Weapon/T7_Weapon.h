@@ -16,6 +16,16 @@ enum class EWeaponState : uint8
 	EWS_Max UMETA(DisplayName = "DefaultMax"),
 
 };
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	EWT_AssaultRifle UMETA(DisplayName = "Assault Rifle"),
+	EWT_Pistol UMETA(DisplayName = "Pistol"),
+	EWT_Shotgun UMETA(DisplayName = "Shotgun"),
+	EWT_Max UMETA(DisplayName = "DefaultMax"),
+};
+
 UCLASS()
 class TEAM7_API AT7_Weapon : public AActor
 {
@@ -60,6 +70,11 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
+	FTimerHandle TimerHandle_Reload;
+
+	// 무기 타입 추가
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	EWeaponType WeaponType;
 
 private:
 
@@ -81,10 +96,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	class UAnimationAsset* FireAnimation;
 
-
-
 	bool bIsReloading = false;
-	FTimerHandle TimerHandle_Reload;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Events")
 	FOnWeaponFired OnWeaponFired;
@@ -109,10 +121,10 @@ public:
 	void SetPickupWidgetVisibility(bool bVisible);
 
 	void Reload();
-private:
 
 	void SpendRound();
 
 	void FinishReload();
+private:
 
 };
