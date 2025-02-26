@@ -22,6 +22,8 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	virtual void Dead() override;
+	
 	void Move(const FInputActionValue& Value);
 
 	void Look(const FInputActionValue& Value);

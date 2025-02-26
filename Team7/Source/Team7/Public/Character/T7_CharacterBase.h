@@ -19,35 +19,44 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	AT7_Weapon* GetCurrentWeapon() const { return CurrentWeapon; }
+
 	void SetCurrentWeapon(AT7_Weapon* NewWeapon) { CurrentWeapon = NewWeapon; }
 
-	float GetCurrentHP() const;
-	float GetMaxHP() const;
-
+	float GetCurrentHP() const { return CurrentHP; }
 	
+	float GetMaxHP() const { return MaxHP; }
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	virtual void Dead();
 protected:
 	// 적 유닛 무기 셋업, 죽었을때 무기 드랍할 예정이면 Base에서 구현하는게 맞을듯
-	 void EquipWeapon(AT7_Weapon* Weapon);
-	 void FireWeapon();
+	void EquipWeapon(AT7_Weapon* Weapon);
+	
+	void FireWeapon();
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|HP")
-	float CurrentHP = 60.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|HP")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|CharacerStatus")
 	float MaxHP = 100.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|CharacerStatus")
+	float CurrentHP = MaxHP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|CharacerStatus")
+	float Armor = 10.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|CharacerStatus")
 	float NormalMaxWalkSpeed = 600.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|CharacerStatus")
 	float SprintMaxWalkSpeed = NormalMaxWalkSpeed * 1.5;
 
 	UPROPERTY(VisibleAnywhere, Category = "T7|Weapon")
 	TObjectPtr<AT7_Weapon> CurrentWeapon = nullptr;
-	
-	UPROPERTY(VisibleAnywhere, Category = "T7|Combat") 
+
+	UPROPERTY(VisibleAnywhere, Category = "T7|Combat")
 	TObjectPtr<UT7_CombatComponent> CombatComponent = nullptr;
 
+	const float DamageReduction = Armor / (Armor + 100);
 	
 };

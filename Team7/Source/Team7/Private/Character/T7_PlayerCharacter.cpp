@@ -81,6 +81,13 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	}
 }
 
+void AT7_PlayerCharacter::Dead()
+{
+	Super::Dead();
+	// TODO: Player가 죽은 경우는 GameOver 처리
+	
+}
+
 void AT7_PlayerCharacter::Move(const FInputActionValue& Value)
 {
 	if (!Controller)

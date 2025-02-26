@@ -9,14 +9,18 @@ AT7_CharacterBase::AT7_CharacterBase(const FObjectInitializer& ObjectInitializer
 	GetCharacterMovement()->MaxWalkSpeed = NormalMaxWalkSpeed;
 }
 
-float AT7_CharacterBase::GetCurrentHP() const
+float AT7_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
 {
-	return CurrentHP;
-}
-
-float AT7_CharacterBase::GetMaxHP() const
-{
-	return MaxHP;
+	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	const float FinalDamage = ActualDamage * (1.0f - DamageReduction);
+	CurrentHP = FMath::Clamp(CurrentHP - FinalDamage, 0.0f, MaxHP);
+	if (FMath::IsNearlyZero(CurrentHP))
+	{
+		Dead();
+	}
+	return FinalDamage;
 }
 
 void AT7_CharacterBase::EquipWeapon(AT7_Weapon* Weapon)
@@ -38,4 +42,14 @@ void AT7_CharacterBase::FireWeapon()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("현재 무기 없음!"));
 	}
+}
+
+void AT7_CharacterBase::Dead()
+{
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
+
+	// 각자 함수 받아서 이후 로직 처리
+		// Enemy는 특정 시간 지나서 시체 사라지게
+		// Player는 죽으면 GameOver 처리
 }
