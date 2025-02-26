@@ -12,8 +12,14 @@ class TEAM7_API AT7_PlayerController : public APlayerController
 public:
 	AT7_PlayerController();
 
-	UFUNCTION(BlueprintPure, Category = "HUD")
+	UFUNCTION(BlueprintPure, Category = "UI")
 	UUserWidget* GetHUDWidget() const;
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowHUDWidget();
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowMainMenu();
 
 protected:
 	virtual void BeginPlay() override;
@@ -25,10 +31,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> MainMenuWidgetClass = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	UUserWidget* MainMenuWidgetInstance;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD")
-	UUserWidget* HUDWidgetInstance;
+	UUserWidget* MainMenuWidgetInstance = nullptr;
+	UUserWidget* HUDWidgetInstance = nullptr;
 
 };

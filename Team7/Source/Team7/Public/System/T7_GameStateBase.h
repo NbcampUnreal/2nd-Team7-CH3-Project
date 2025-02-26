@@ -4,6 +4,9 @@
 #include "GameFramework/GameStateBase.h"
 #include "T7_GameStateBase.generated.h"
 
+class AT7_PlayerController;
+class AT7_PlayerCharacter;
+
 UCLASS()
 class TEAM7_API AT7_GameStateBase : public AGameStateBase
 {
@@ -31,6 +34,10 @@ public:
 
 	UFUNCTION(BLueprintCallable, Category = "HUD")
 	void UpdateWeaponInfo(UTexture2D* NewWeaponTexture, FString WeaponName, int32 CurAmmo, int32 MaxAmmo);
+
+	AT7_PlayerController* GetT7Controller();
+	AT7_PlayerCharacter* GetT7Character();
+
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Score")
