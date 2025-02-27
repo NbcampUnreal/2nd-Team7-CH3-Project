@@ -2,6 +2,7 @@
 #include "Team7/Public/PlayerController/T7_PlayerController.h"
 #include "Team7/Public/Character/T7_PlayerCharacter.h"
 #include "Team7/Public/Character/T7_CharacterBase.h"
+#include "Team7/Public/Weapon/T7_Weapon.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
@@ -71,15 +72,6 @@ void AT7_GameStateBase::UpdateHUD()
 				{
 					HpProgressBar->SetPercent(PlayerCharacter->GetCurrentHP() / PlayerCharacter->GetMaxHP());
 				}
-
-				if (PlayerCharacter->GetCurrentWeapon() != nullptr)
-				{
-					UpdateWeaponInfo(nullptr, FString("Rifle"), 12, 24);
-				}
-				else
-				{
-					UpdateWeaponInfo(nullptr, FString("FryFan"), 0, 0);
-				}
 			}
 		}
 	}
@@ -120,12 +112,12 @@ void AT7_GameStateBase::UpdateWeaponInfo(UTexture2D* NewWeaponTexture, FString W
 void AT7_GameStateBase::AddKillLog(AT7_CharacterBase* Enemy)
 {
 	FText PlayerName = FText::FromString(TEXT("Legend"));
-	//FText EnemyName = FText::FromName(Enemy->GetName());
-	FText EnemyName = FText::FromString(TEXT("Newbie"));
+	FText EnemyName = FText::FromString(Enemy->GetName());
+	UTexture2D* NewWeaponTexture = nullptr;
 
 	if (AT7_PlayerCharacter* PlayerCharacter = GetT7Character())
 	{
-		//PlayerCharacter->GetCurrentWeapon()->GetWeaponImage();
+		NewWeaponTexture = PlayerCharacter->GetCurrentWeapon()->WeaponIcon;
 		PlayerName = FText::FromString(PlayerCharacter->GetName());
 	}
 
@@ -149,10 +141,10 @@ void AT7_GameStateBase::AddKillLog(AT7_CharacterBase* Enemy)
 					{
 						if (UMaterialInstanceDynamic* DynamicMaterial = WeaponImage->GetDynamicMaterial())
 						{
-							/*if (NewWeaponTexture)
+							if (NewWeaponTexture)
 							{
 								DynamicMaterial->SetTextureParameterValue(TEXT("Image"), NewWeaponTexture);
-							}*/
+							}
 						}
 					}
 					KillLogBox->AddChild(KillLog);

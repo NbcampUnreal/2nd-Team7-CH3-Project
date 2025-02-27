@@ -13,8 +13,8 @@ AT7_EnemyAIController::AT7_EnemyAIController()
 	EnemyPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 1000.0f;
-	SightConfig->LoseSightRadius = 1500.0f;
+	SightConfig->SightRadius = 2000.0f;
+	SightConfig->LoseSightRadius = 3000.0f;
 	SightConfig->PeripheralVisionAngleDegrees = 90.0f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
@@ -23,6 +23,7 @@ AT7_EnemyAIController::AT7_EnemyAIController()
 	DamageConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("DamageConfig"));
 
 	EnemyPerception->ConfigureSense(*SightConfig);
+	EnemyPerception->ConfigureSense(*DamageConfig);
 	EnemyPerception->SetDominantSense(SightConfig->GetSenseImplementation());
 
 	EnemyPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AT7_EnemyAIController::OnTargetPerceptionUpdated);

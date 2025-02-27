@@ -19,6 +19,16 @@ float AT7_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent cons
 	
 	const float FinalDamage = ActualDamage * (1.0f - DamageReduction);
 	CurrentHP = FMath::Clamp(CurrentHP - FinalDamage, 0.0f, MaxHP);
+
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		AT7_GameStateBase* GameState = PC->GetWorld()->GetGameState<AT7_GameStateBase>();
+		if (GameState)
+		{
+			GameState->UpdateHUD();
+		}
+	}
+
 	if (FMath::IsNearlyZero(CurrentHP))
 	{
 		Dead();

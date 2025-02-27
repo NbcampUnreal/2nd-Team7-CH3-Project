@@ -40,7 +40,7 @@ protected:
 	TObjectPtr<UAISenseConfig_Damage> DamageConfig;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	float AttackRange = 1500.0f;
+	float AttackRange = 1000.0f;
 
 	float AttackRangeSquared = AttackRange * AttackRange;
 };
