@@ -78,9 +78,32 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		const UInputAction* SwitchCameraAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_SWITCHCAMERA);
 		EnhancedInputComponent->BindAction(SwitchCameraAction, ETriggerEvent::Completed, this, &ThisClass::SwitchCamera);
+
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &ThisClass::ReloadWeapon);
+
 	}
 }
 
+
+float AT7_PlayerCharacter::GetCurrentHp() const
+{
+	return 50.0f;
+}
+
+float AT7_PlayerCharacter::GetMaxHp() const
+{
+	return 100.0f;
+}
+
+
+FString AT7_PlayerCharacter::GetWeaponName()
+{
+	/*if (CurrentWeapon != nullptr)
+	{
+		return CurrentWeapon->GetName();
+	}
+	else */return FString::Printf(TEXT(""));
+}
 void AT7_PlayerCharacter::Dead()
 {
 	Super::Dead();
@@ -136,6 +159,14 @@ void AT7_PlayerCharacter::DropWeapon()
 	UE_LOG(LogTemp, Warning, TEXT("DropWeapon() 호출됨!"));
 }
 
+void AT7_PlayerCharacter::ReloadWeapon()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->Reload();
+	}
+}
+
 void AT7_PlayerCharacter::StartSprint()
 {
 	GetCharacterMovement()->MaxWalkSpeed = SprintMaxWalkSpeed;
@@ -175,6 +206,7 @@ void AT7_PlayerCharacter::SwitchCamera()
 		bUseControllerRotationPitch = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
+
 	// Toggle
 	bUseTPSCamera = !bUseTPSCamera;
 }
@@ -202,3 +234,24 @@ void AT7_PlayerCharacter::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComp
 	}
 }
 
+// 다시 구현
+void AT7_PlayerCharacter::PlayReloadMontage()
+{
+	if (CombatComponent == nullptr || CombatComponent->EquippedWeapon == nullptr) return;
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && ReloadMontage)
+	{
+		AnimInstance->Montage_Play(ReloadMontage);
+		FName SectionName;
+
+		switch (CombatComponent->EquippedWeapon->GetWeaponType())
+		{
+		case EWeaponType::EWT_AssaultRifle:
+			SectionName = FName("Rifle");
+			break;
+		}
+
+		AnimInstance->Montage_JumpToSection(SectionName);
+	}
+}

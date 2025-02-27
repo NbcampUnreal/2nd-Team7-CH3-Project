@@ -9,6 +9,8 @@
 #include "Animation/AnimationAsset.h"
 #include "Team7/Public/Character/T7_PlayerCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Team7/Public/System/T7_GameStateBase.h"
+#include "DrawDebugHelpers.h"  
 
 AT7_Weapon::AT7_Weapon()
 {
@@ -33,9 +35,11 @@ AT7_Weapon::AT7_Weapon()
     PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
     PickupWidget->SetupAttachment(RootComponent);
 
-    // ÃÊ±â »óÅÂ ¼³Á¤
     WeaponState = EWeaponState::EWS_Initial;
+    MaxAmmo = 30; 
+    Ammo = MaxAmmo;
 
+    UE_LOG(LogTemp, Warning, TEXT("Weapon Spawned! Ammo: %d"), Ammo);
 }
 
 void AT7_Weapon::BeginPlay()
@@ -55,26 +59,43 @@ void AT7_Weapon::Tick(float DeltaTime)
 void AT7_Weapon::Fire()
 {
     if (GetOwner() == nullptr) return;
+    if (bIsReloading) return;
+    if (!CanFire())
+    {
+        Reload();
+        return;
+    }
 
     APlayerController* PlayerController = Cast<APlayerController>(GetOwner()->GetInstigatorController());
-    if (PlayerController == nullptr) return;
+    if (!PlayerController) return;
 
     UWorld* World = GetWorld();
     if (World == nullptr) return;
 
     OnWeaponFired.Broadcast();
 
-    FVector MuzzleLocation;
-    if (WeaponMesh->DoesSocketExist(FName("MuzzleSocket")))
+    FVector MuzzleLocation = WeaponMesh->GetSocketLocation(FName("MuzzleSocket"));
+
+    FVector CameraLocation;
+    FRotator CameraRotation;
+    PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+    FVector EndTrace = CameraLocation + (CameraRotation.Vector() * 5000.0f);
+    FHitResult HitResult;
+    FCollisionQueryParams QueryParams;
+    QueryParams.AddIgnoredActor(this);
+    QueryParams.AddIgnoredActor(GetOwner());
+
+    if (World->LineTraceSingleByChannel(HitResult, CameraLocation, EndTrace, ECC_Visibility, QueryParams))
     {
-        MuzzleLocation = WeaponMesh->GetSocketLocation(FName("MuzzleSocket"));
-    }
-    else
-    {
-        MuzzleLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
+        EndTrace = HitResult.ImpactPoint;
     }
 
-    FRotator MuzzleRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+    FVector FireDirection = (EndTrace - MuzzleLocation).GetSafeNormal();
+
+    DrawDebugLine(World, MuzzleLocation, EndTrace, FColor::Red, false, 2.0f, 0, 2.0f);
+
+    DrawDebugSphere(World, EndTrace, 10.0f, 12, FColor::Green, false, 2.0f);
 
     if (ProjectileClass)
     {
@@ -83,15 +104,78 @@ void AT7_Weapon::Fire()
         SpawnParams.Instigator = GetInstigator();
         SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
-        World->SpawnActor<AT7_Projectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+        AT7_Projectile* Projectile = World->SpawnActor<AT7_Projectile>(ProjectileClass, MuzzleLocation, FireDirection.Rotation(), SpawnParams);
     }
 
     if (FireAnimation && WeaponMesh)
     {
         WeaponMesh->PlayAnimation(FireAnimation, false);
     }
+
+    SpendRound();
+    UpdateAmmoHUD();
 }
 
+
+void AT7_Weapon::SpendRound()
+{
+    if (Ammo > 0)
+    {
+        --Ammo;
+        UE_LOG(LogTemp, Warning, TEXT("Ammo Remaining: %d"), Ammo); 
+    }
+}
+
+void AT7_Weapon::Reload()
+{
+    if (Ammo >= MaxAmmo)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Ammo is Full! No need to reload."));
+        return;
+    }
+
+    if (bIsReloading) return;
+
+    bIsReloading = true;
+    UE_LOG(LogTemp, Warning, TEXT("Reloading... Timer Started"));
+
+    if (ReloadAnimation && WeaponMesh)
+    {
+        WeaponMesh->PlayAnimation(ReloadAnimation, false);
+    }
+    GetWorldTimerManager().SetTimer(TimerHandle_Reload, this, &AT7_Weapon::FinishReload, 1.5f, false);
+
+    UE_LOG(LogTemp, Warning, TEXT("Timer Successfully Set!"));
+}
+
+
+
+void AT7_Weapon::FinishReload()
+{
+    if (Ammo < MaxAmmo)  // ì´ë¯¸ ìµœëŒ€ íƒ„ì•½ì´ë©´ ë³€ê²½ ì•ˆ í•¨
+    {
+        Ammo = MaxAmmo;
+    }
+
+    bIsReloading = false;
+    UE_LOG(LogTemp, Warning, TEXT("%s: Reloaded! Ammo: %d (MaxAmmo: %d)"), *WeaponName, Ammo, MaxAmmo);
+
+    UpdateAmmoHUD();
+}
+
+void AT7_Weapon::UpdateAmmoHUD()
+{
+    AT7_GameStateBase* GameState = GetWorld() ? GetWorld()->GetGameState<AT7_GameStateBase>() : nullptr;
+    if (GameState)
+    {
+        int32 CurrentAmmo = Ammo;
+        int32 MaxClipAmmo = MaxAmmo;  
+
+        UE_LOG(LogTemp, Warning, TEXT("Updating HUD: %s - Ammo: %d / %d"), *WeaponName, CurrentAmmo, MaxClipAmmo);
+
+        GameState->UpdateWeaponInfo(WeaponIcon, WeaponName, CurrentAmmo, MaxClipAmmo);
+    }
+}
 
 void AT7_Weapon::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -100,7 +184,9 @@ void AT7_Weapon::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
     if (PlayerCharacter)
     {
         PlayerCharacter->OverlappingWeapon = this;
-        PickupWidget->SetVisibility(true);  // UI Ç¥½Ã
+        PickupWidget->SetVisibility(true);
+
+        UpdateAmmoHUD();
     }
 }
 
@@ -110,8 +196,14 @@ void AT7_Weapon::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AA
     AT7_PlayerCharacter* PlayerCharacter = Cast<AT7_PlayerCharacter>(OtherActor);
     if (PlayerCharacter && PlayerCharacter->OverlappingWeapon == this)
     {
-        PlayerCharacter->OverlappingWeapon = nullptr;  // ÁÝ±â ÇØÁ¦
-        PickupWidget->SetVisibility(false);  // UI ¼û±è
+        PlayerCharacter->OverlappingWeapon = nullptr;
+        PickupWidget->SetVisibility(false);
+
+        AT7_GameStateBase* GameState = GetWorld() ? GetWorld()->GetGameState<AT7_GameStateBase>() : nullptr;
+        if (GameState)
+        {
+            GameState->UpdateWeaponInfo(nullptr, TEXT(""), 0, 0);  // UI ìˆ¨ê¹€
+        }
     }
 }
 

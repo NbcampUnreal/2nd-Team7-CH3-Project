@@ -1,6 +1,8 @@
 ﻿#include "Team7/Public/Character/T7_CharacterBase.h"
 #include "Team7/Public/Combat/T7_CombatComponent.h"
 #include "Team7/Public/Weapon/T7_Weapon.h"
+#include "Team7/public/System/T7_GameStateBase.h"
+#include "Team7/Public/Character/T7_PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AT7_CharacterBase::AT7_CharacterBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -25,8 +27,26 @@ float AT7_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent cons
 
 void AT7_CharacterBase::EquipWeapon(AT7_Weapon* Weapon)
 {
-	UE_LOG(LogTemp, Warning, TEXT("EquipWeapon() 호출됨!"));
-	CurrentWeapon = Weapon;
+    if (Weapon == nullptr || CombatComponent == nullptr) return;
+
+    UE_LOG(LogTemp, Warning, TEXT("EquipWeapon() 호출됨! 장착 무기: %s"), *Weapon->GetName());
+
+    CombatComponent->EquipWeapon(Weapon);  
+    CurrentWeapon = Weapon;
+
+    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+    {
+        AT7_GameStateBase* GameState = PC->GetWorld()->GetGameState<AT7_GameStateBase>();
+        if (GameState)
+        {
+            GameState->UpdateWeaponInfo(
+                Weapon->WeaponIcon,  // 무기 아이콘
+                Weapon->WeaponName,  // 무기 이름
+                Weapon->GetAmmo(),   // 현재 탄약
+                Weapon->GetMaxAmmo() // 최대 탄약
+            );
+        }
+    }
 }
 
 void AT7_CharacterBase::FireWeapon()

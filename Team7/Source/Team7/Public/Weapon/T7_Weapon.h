@@ -4,83 +4,134 @@
 #include "GameFramework/Actor.h"
 #include "T7_Weapon.generated.h"
 
-// √—±‚ πﬂªÁ µ®∏Æ∞‘¿Ã∆Æ
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponFired);
 
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
 {
-	EWS_Initial UMETA(DisplayName = "Initial State"),
-	EWS_Equipped UMETA(DisplayName = "Equipped"),
-	EWS_Dropped UMETA(DisplayName = "Dropped"),
-
-	EWS_Max UMETA(DisplayName = "DefaultMax"),
-
+    EWS_Initial UMETA(DisplayName = "Initial State"),
+    EWS_Equipped UMETA(DisplayName = "Equipped"),
+    EWS_Dropped UMETA(DisplayName = "Dropped"),
+    EWS_Max UMETA(DisplayName = "DefaultMax"),
 };
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+    EWT_AssaultRifle UMETA(DisplayName = "Assault Rifle"),
+    EWT_Pistol UMETA(DisplayName = "Pistol"),
+    EWT_Shotgun UMETA(DisplayName = "Shotgun"),
+    EWT_Sniper UMETA(DisplayName = "Sniper"),
+    EWT_Max UMETA(DisplayName = "DefaultMax"),
+};
+
 UCLASS()
 class TEAM7_API AT7_Weapon : public AActor
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
+    AT7_Weapon();
+    virtual void Tick(float DeltaTime) override;
 
-	AT7_Weapon();
-	virtual void Tick(float DeltaTime) override;
+    FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 
-	// √—±‚ πﬂªÁ
-	UFUNCTION(BlueprintCallable)
-	void Fire();
+    UFUNCTION(BlueprintCallable)
+    virtual void Fire();
 
-	void SetWeaponState(EWeaponState NewState);
+    UPROPERTY(EditAnywhere, Category = "Crosshairs")
+    class UTexture2D* CrosshairsCenter;
 
-	// ¡›±‚ UIº≥¡§
-	void SetPickupWidgetVisibility(bool bVisible);
+    UPROPERTY(EditAnywhere, Category = "Crosshairs")
+    UTexture2D* CrosshairsLeft;
+
+    UPROPERTY(EditAnywhere, Category = "Crosshairs")
+    UTexture2D* CrosshairsRight;
+
+    UPROPERTY(EditAnywhere, Category = "Crosshairs")
+    UTexture2D* CrosshairsTop;
+
+    UPROPERTY(EditAnywhere, Category = "Crosshairs")
+    UTexture2D* CrosshairsBottom;
+
+    UPROPERTY(EditAnywhere, Category = "Weapon Info")
+    FString WeaponName;  // Î¨¥Í∏∞ Ïù¥Î¶Ñ
+
+    UPROPERTY(EditAnywhere, Category = "Weapon Info")
+    UTexture2D* WeaponIcon;  // Î¨¥Í∏∞ ÏïÑÏù¥ÏΩò Ïù¥ÎØ∏ÏßÄ
+
+    UPROPERTY(EditAnywhere, Category = "Weapon Ammo")
+    int32 MaxAmmo;
+
+    UPROPERTY(EditAnywhere, Category = "Weapon Ammo")
+    int32 Ammo;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+    float Damage = 20.0f;  // Í∏∞Î≥∏ Îç∞ÎØ∏ÏßÄ Í∞í
+
+    float GetDamage() const { return Damage; } 
+
+    FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
+
 
 protected:
+    virtual void BeginPlay() override;
+    FTimerHandle TimerHandle_Reload;
 
-	virtual void BeginPlay() override;
+    // Î¨¥Í∏∞ ÌÉÄÏûÖ Ï∂îÍ∞Ä
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+    EWeaponType WeaponType;
+
 
 
 private:
+    UPROPERTY(VisibleAnywhere, Category = "Weapon")
+    class USphereComponent* PickupTrigger;
 
-	//π´±‚
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	USkeletalMeshComponent* WeaponMesh;
+    UPROPERTY(EditAnywhere, Category = "Weapon")
+    EWeaponState WeaponState;
 
-	//√Êµπ ∞®¡ˆ(π´±‚ »πµÊ)
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	class USphereComponent* PickupTrigger;
+    UPROPERTY(EditDefaultsOnly, Category = "Combat")
+    TSubclassOf<class AT7_Projectile> ProjectileClass;
 
-	// «ˆ¿Á π´±‚
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	EWeaponState WeaponState;
+    UPROPERTY(VisibleAnywhere, Category = "Weapon")
+    USkeletalMeshComponent* WeaponMesh;
 
-	// π´±‚ ¡›±‚ UI
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	class UWidgetComponent* PickupWidget;
+    UPROPERTY(VisibleAnywhere, Category = "Weapon")
+    class UWidgetComponent* PickupWidget;
 
-	// ≈∫»Ø
-	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-	TSubclassOf<class AT7_Projectile> ProjectileClass;
+    UPROPERTY(EditAnywhere, Category = "Weapon")
+    class UAnimationAsset* FireAnimation;
 
-	
+    UPROPERTY(EditAnywhere, Category = "Weapon")
+    class UAnimationAsset* ReloadAnimation;
 
-	// πﬂªÁ æ÷¥œ∏ﬁ¿Ãº« 
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	class UAnimationAsset* FireAnimation;
+    bool bIsReloading = false;
 
+    UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Events")
+    FOnWeaponFired OnWeaponFired;
 
-	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Events")
-	FOnWeaponFired OnWeaponFired;
+    UFUNCTION()
+    void OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION()
-	void OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+    UFUNCTION()
+    void OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:
+    int32 GetAmmo() const { return Ammo; }
+    int32 GetMaxAmmo() const { return MaxAmmo; }
+    bool CanFire() const { return Ammo > 0; }
 
+    void UpdateAmmoHUD();
+    void SetWeaponState(EWeaponState NewState);
+
+    void SetPickupWidgetVisibility(bool bVisible);
+
+    void Reload();
+
+    void SpendRound();
+
+    void FinishReload();
 };

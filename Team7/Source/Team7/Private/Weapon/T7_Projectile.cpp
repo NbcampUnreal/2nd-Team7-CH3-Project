@@ -1,5 +1,7 @@
 
 #include "Weapon/T7_Projectile.h"
+#include "Team7/Public/Character/T7_CharacterBase.h"
+#include "Team7/Public/Weapon/T7_Weapon.h"  // 추가!
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -43,24 +45,31 @@ void AT7_Projectile::Tick(float DeltaTime)
 void AT7_Projectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// �ڱ� �ڽŰ� �浹�� ��� ����
 	if (OtherActor == nullptr || OtherActor == this) return;
 
-	const float Damage = 20.0f;
+	float Damage = 20.0f; // 기본값
 
-	// GetCurrentWeapon()이 NULL임
-	// PlayerCharacter의 OverlappingWeapon과 CharacterBase의 CurrentWeapon를 합치는게? 
-	
-	//float Damage = 0.0f;
-	// if (const AT7_CharacterBase* Character = Cast<AT7_CharacterBase>(OtherActor))
-	// {
-	// 	if (const AT7_Weapon* Weapon = Character->GetCurrentWeapon())
-	// 	{
-	// 		Damage = Weapon->GetDamage();	
-	// 	}
-	// }
-	
+	if (const AT7_CharacterBase* Character = Cast<AT7_CharacterBase>(OtherActor))
+	{
+		if (const AT7_Weapon* Weapon = Character->GetCurrentWeapon())
+		{
+			Damage = Weapon->GetDamage();  // GetDamage()가 정상적으로 호출됨
+		}
+	}
+
 	UGameplayStatics::ApplyDamage(OtherActor, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
 
 	Destroy();
 }
+
+// GetCurrentWeapon()이 NULL임
+// PlayerCharacter의 OverlappingWeapon과 CharacterBase의 CurrentWeapon를 합치는게? 
+
+//float Damage = 0.0f;
+// if (const AT7_CharacterBase* Character = Cast<AT7_CharacterBase>(OtherActor))
+// {
+// 	if (const AT7_Weapon* Weapon = Character->GetCurrentWeapon())
+// 	{
+// 		Damage = Weapon->GetDamage();	
+// 	}
+// }

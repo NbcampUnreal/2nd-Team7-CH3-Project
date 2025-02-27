@@ -31,6 +31,7 @@ protected:
 	void PickupWeapon();
 
 	void DropWeapon();
+	void ReloadWeapon();
 
 	void StartSprint();
 
@@ -46,6 +47,29 @@ public:
 	//  줍기 가능한 무기
 	UPROPERTY(VisibleAnywhere, Category = "T7|Weapon")
 	AT7_Weapon* OverlappingWeapon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Input")
+	TObjectPtr<UInputAction> ReloadAction = nullptr;
+
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	float GetCurrentHp() const;
+
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	float GetMaxHp() const;
+
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	int GetCurrentAmmo() const;
+
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	int GetMaxAmmo() const;
+
+	UFUNCTION(BlueprintPure, Category = "HUD")
+	FString GetWeaponName();
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* ReloadMontage;
+
+	void PlayReloadMontage();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "T7|Camera")
