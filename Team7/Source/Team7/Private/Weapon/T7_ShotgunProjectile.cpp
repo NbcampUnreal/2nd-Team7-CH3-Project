@@ -5,16 +5,16 @@
 
 AT7_ShotgunProjectile::AT7_ShotgunProjectile()
 {
-    // ºÎ¸ð Å¬·¡½ºÀÇ ±âº» ¼³Á¤ À¯Áö
+    // ï¿½Î¸ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½âº» ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     PrimaryActorTick.bCanEverTick = false;
 
-    // µ¥¹ÌÁö ¼³Á¤
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     ShotgunPelletDamage = 10.0f;
 
-    // Ãæµ¹ ÀÌº¥Æ® ¹ÙÀÎµù
-    CollisionBox->OnComponentHit.AddDynamic(this, &AT7_ShotgunProjectile::OnHit);
+    // ï¿½æµ¹ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½Îµï¿½
+    //CollisionBox->OnComponentHit.AddDynamic(this, &AT7_ShotgunProjectile::OnHit);
 
-    // ÂªÀº ÅºÈ¯ ¼ö¸í (¼¦°Ç ÅºÈ¯Àº ºü¸£°Ô »ç¶óÁü)
+    // Âªï¿½ï¿½ ÅºÈ¯ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ÅºÈ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½)
     SetLifeSpan(1.5f);
 }
 
@@ -30,5 +30,5 @@ void AT7_ShotgunProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Oth
 
     UGameplayStatics::ApplyDamage(OtherActor, ShotgunPelletDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 
-    Destroy(); // ÅºÈ¯ÀÌ ¸ÂÀ¸¸é »ç¶óÁü
+    Destroy();
 }
