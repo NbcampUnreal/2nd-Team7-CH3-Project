@@ -47,6 +47,8 @@ void AT7_Projectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor
 {
 	if (OtherActor == nullptr || OtherActor == this) return;
 
+	UE_LOG(LogTemp, Warning, TEXT("Projectile hit: %s"), *OtherActor->GetName()); // 디버그 로그 추가
+
 	float Damage = 20.0f; // 기본값
 
 	if (const AT7_CharacterBase* Character = Cast<AT7_CharacterBase>(OtherActor))
@@ -61,6 +63,7 @@ void AT7_Projectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor
 
 	Destroy();
 }
+
 
 // GetCurrentWeapon()이 NULL임
 // PlayerCharacter의 OverlappingWeapon과 CharacterBase의 CurrentWeapon를 합치는게? 
