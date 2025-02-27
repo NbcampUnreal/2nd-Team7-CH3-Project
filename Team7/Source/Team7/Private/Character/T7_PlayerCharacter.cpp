@@ -85,11 +85,6 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 }
 
 
-float AT7_PlayerCharacter::GetCurrentHp() const
-{
-	return 50.0f;
-}
-
 FString AT7_PlayerCharacter::GetWeaponName()
 {
 	/*if (CurrentWeapon != nullptr)
@@ -98,6 +93,7 @@ FString AT7_PlayerCharacter::GetWeaponName()
 	}
 	else */return FString::Printf(TEXT(""));
 }
+
 void AT7_PlayerCharacter::Dead()
 {
 	Super::Dead();
