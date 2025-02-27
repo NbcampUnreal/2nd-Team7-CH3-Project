@@ -66,6 +66,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "HUD")
 	FString GetWeaponName();
 
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* ReloadMontage;
+
+	void PlayReloadMontage();
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "T7|Camera")
 	TObjectPtr<USpringArmComponent> TPSSpringArmComponent = nullptr;

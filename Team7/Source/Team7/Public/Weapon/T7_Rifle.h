@@ -14,7 +14,9 @@ class TEAM7_API AT7_Rifle : public AT7_Weapon
 	GENERATED_BODY()
 
 public:
+	AT7_Rifle();
 
+	virtual void Fire() override;
 
 	
 protected:

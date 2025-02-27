@@ -10,6 +10,7 @@
 #include "Team7/Public/Character/T7_PlayerCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Team7/Public/System/T7_GameStateBase.h"
+#include "DrawDebugHelpers.h"  
 
 AT7_Weapon::AT7_Weapon()
 {
@@ -58,39 +59,43 @@ void AT7_Weapon::Tick(float DeltaTime)
 void AT7_Weapon::Fire()
 {
     if (GetOwner() == nullptr) return;
-
-    if (bIsReloading)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Cannot fire while reloading!"));
-        return;
-    }
-
+    if (bIsReloading) return;
     if (!CanFire())
     {
-        UE_LOG(LogTemp, Warning, TEXT("Out of Ammo! Reloading..."));
         Reload();
         return;
     }
 
     APlayerController* PlayerController = Cast<APlayerController>(GetOwner()->GetInstigatorController());
-    if (PlayerController == nullptr) return;
+    if (!PlayerController) return;
 
     UWorld* World = GetWorld();
     if (World == nullptr) return;
 
     OnWeaponFired.Broadcast();
 
-    FVector MuzzleLocation;
-    if (WeaponMesh->DoesSocketExist(FName("MuzzleSocket")))
+    FVector MuzzleLocation = WeaponMesh->GetSocketLocation(FName("MuzzleSocket"));
+
+    FVector CameraLocation;
+    FRotator CameraRotation;
+    PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+    FVector EndTrace = CameraLocation + (CameraRotation.Vector() * 5000.0f);
+    FHitResult HitResult;
+    FCollisionQueryParams QueryParams;
+    QueryParams.AddIgnoredActor(this);
+    QueryParams.AddIgnoredActor(GetOwner());
+
+    if (World->LineTraceSingleByChannel(HitResult, CameraLocation, EndTrace, ECC_Visibility, QueryParams))
     {
-        MuzzleLocation = WeaponMesh->GetSocketLocation(FName("MuzzleSocket"));
-    }
-    else
-    {
-        MuzzleLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
+        EndTrace = HitResult.ImpactPoint;
     }
 
-    FRotator MuzzleRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+    FVector FireDirection = (EndTrace - MuzzleLocation).GetSafeNormal();
+
+    DrawDebugLine(World, MuzzleLocation, EndTrace, FColor::Red, false, 2.0f, 0, 2.0f);
+
+    DrawDebugSphere(World, EndTrace, 10.0f, 12, FColor::Green, false, 2.0f);
 
     if (ProjectileClass)
     {
@@ -99,7 +104,7 @@ void AT7_Weapon::Fire()
         SpawnParams.Instigator = GetInstigator();
         SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
-        World->SpawnActor<AT7_Projectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+        AT7_Projectile* Projectile = World->SpawnActor<AT7_Projectile>(ProjectileClass, MuzzleLocation, FireDirection.Rotation(), SpawnParams);
     }
 
     if (FireAnimation && WeaponMesh)
@@ -107,12 +112,9 @@ void AT7_Weapon::Fire()
         WeaponMesh->PlayAnimation(FireAnimation, false);
     }
 
-    SpendRound();  // 총알 소비
-
+    SpendRound();
     UpdateAmmoHUD();
 }
-
-
 
 
 void AT7_Weapon::SpendRound()
@@ -137,16 +139,26 @@ void AT7_Weapon::Reload()
     bIsReloading = true;
     UE_LOG(LogTemp, Warning, TEXT("Reloading... Timer Started"));
 
+    if (ReloadAnimation && WeaponMesh)
+    {
+        WeaponMesh->PlayAnimation(ReloadAnimation, false);
+    }
     GetWorldTimerManager().SetTimer(TimerHandle_Reload, this, &AT7_Weapon::FinishReload, 1.5f, false);
 
     UE_LOG(LogTemp, Warning, TEXT("Timer Successfully Set!"));
 }
 
+
+
 void AT7_Weapon::FinishReload()
 {
-    Ammo = MaxAmmo;
+    if (Ammo < MaxAmmo)  // 이미 최대 탄약이면 변경 안 함
+    {
+        Ammo = MaxAmmo;
+    }
+
     bIsReloading = false;
-    UE_LOG(LogTemp, Warning, TEXT("Reloaded! Ammo: %d"), Ammo);
+    UE_LOG(LogTemp, Warning, TEXT("%s: Reloaded! Ammo: %d (MaxAmmo: %d)"), *WeaponName, Ammo, MaxAmmo);
 
     UpdateAmmoHUD();
 }
@@ -156,7 +168,12 @@ void AT7_Weapon::UpdateAmmoHUD()
     AT7_GameStateBase* GameState = GetWorld() ? GetWorld()->GetGameState<AT7_GameStateBase>() : nullptr;
     if (GameState)
     {
-        GameState->UpdateWeaponInfo(WeaponIcon, WeaponName, Ammo, MaxAmmo);
+        int32 CurrentAmmo = Ammo;
+        int32 MaxClipAmmo = MaxAmmo;  
+
+        UE_LOG(LogTemp, Warning, TEXT("Updating HUD: %s - Ammo: %d / %d"), *WeaponName, CurrentAmmo, MaxClipAmmo);
+
+        GameState->UpdateWeaponInfo(WeaponIcon, WeaponName, CurrentAmmo, MaxClipAmmo);
     }
 }
 
