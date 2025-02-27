@@ -18,8 +18,13 @@ public:
 	AT7_Shotgun();
 	virtual void Fire() override;
 
+	//virtual void SpendRound() override;
+
 private:
-	
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<class AT7_ShotgunProjectile> ShotgunProjectileClass;
+
+	FVector HitTarget;
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* ImpactParticles;

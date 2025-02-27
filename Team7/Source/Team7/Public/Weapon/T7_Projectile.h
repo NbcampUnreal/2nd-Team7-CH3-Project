@@ -16,7 +16,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
 	// 탄환 충돌 감지 박스
 	UPROPERTY(EditAnywhere, Category = "Components")
 	class UBoxComponent* CollisionBox;
@@ -27,6 +26,8 @@ private:
 
 	// 충돌 시 실행될 함수
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+private:
+	
 };

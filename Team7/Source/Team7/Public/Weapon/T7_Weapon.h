@@ -33,6 +33,8 @@ public:
     AT7_Weapon();
     virtual void Tick(float DeltaTime) override;
 
+    FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
+
     UFUNCTION(BlueprintCallable)
     virtual void Fire();
 
