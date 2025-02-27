@@ -10,7 +10,6 @@ AT7_Projectile::AT7_Projectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	OwnerActor = GetOwner(); 
 
 
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
@@ -23,7 +22,6 @@ AT7_Projectile::AT7_Projectile()
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 
-	CollisionBox->OnComponentHit.AddDynamic(this, &AT7_Projectile::OnHit);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->InitialSpeed = 3000.f;
@@ -40,7 +38,6 @@ void AT7_Projectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CollisionBox->OnComponentHit.AddDynamic(this, &AT7_Projectile::OnHit);
 }
 
 void AT7_Projectile::Tick(float DeltaTime)
@@ -52,13 +49,9 @@ void AT7_Projectile::Tick(float DeltaTime)
 void AT7_Projectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (!OtherActor || OtherActor == this) return;
+	if (OtherActor == nullptr || OtherActor == this) return;
 
-	if (OtherActor == OwnerActor)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Projectile hit its owner, ignoring..."));
-		return;
-	}
+	
 
 	float Damage = 20.0f;
 
