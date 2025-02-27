@@ -75,6 +75,8 @@ void AT7_Weapon::Fire()
     OnWeaponFired.Broadcast();
 
     FVector MuzzleLocation = WeaponMesh->GetSocketLocation(FName("MuzzleSocket"));
+    FVector ForwardVector = WeaponMesh->GetSocketRotation(FName("MuzzleSocket")).Vector();
+    MuzzleLocation += ForwardVector * 20.0f; 
 
     FVector CameraLocation;
     FRotator CameraRotation;
@@ -94,7 +96,6 @@ void AT7_Weapon::Fire()
     FVector FireDirection = (EndTrace - MuzzleLocation).GetSafeNormal();
 
     DrawDebugLine(World, MuzzleLocation, EndTrace, FColor::Red, false, 2.0f, 0, 2.0f);
-
     DrawDebugSphere(World, EndTrace, 10.0f, 12, FColor::Green, false, 2.0f);
 
     if (ProjectileClass)
@@ -102,9 +103,19 @@ void AT7_Weapon::Fire()
         FActorSpawnParameters SpawnParams;
         SpawnParams.Owner = this;
         SpawnParams.Instigator = GetInstigator();
-        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-        AT7_Projectile* Projectile = World->SpawnActor<AT7_Projectile>(ProjectileClass, MuzzleLocation, FireDirection.Rotation(), SpawnParams);
+        AT7_Projectile* Projectile = World->SpawnActor<AT7_Projectile>(
+            ProjectileClass, MuzzleLocation, FireDirection.Rotation(), SpawnParams);
+
+        if (Projectile)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Projectile Spawned at: %s"), *MuzzleLocation.ToString());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Projectile Spawn Failed!"));
+        }
     }
 
     if (FireAnimation && WeaponMesh)
@@ -122,7 +133,7 @@ void AT7_Weapon::SpendRound()
     if (Ammo > 0)
     {
         --Ammo;
-        UE_LOG(LogTemp, Warning, TEXT("Ammo Remaining: %d"), Ammo); 
+        
     }
 }
 
@@ -130,14 +141,14 @@ void AT7_Weapon::Reload()
 {
     if (Ammo >= MaxAmmo)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Ammo is Full! No need to reload."));
+        
         return;
     }
 
     if (bIsReloading) return;
 
     bIsReloading = true;
-    UE_LOG(LogTemp, Warning, TEXT("Reloading... Timer Started"));
+  
 
     if (ReloadAnimation && WeaponMesh)
     {
@@ -145,7 +156,6 @@ void AT7_Weapon::Reload()
     }
     GetWorldTimerManager().SetTimer(TimerHandle_Reload, this, &AT7_Weapon::FinishReload, 1.5f, false);
 
-    UE_LOG(LogTemp, Warning, TEXT("Timer Successfully Set!"));
 }
 
 
@@ -158,7 +168,6 @@ void AT7_Weapon::FinishReload()
     }
 
     bIsReloading = false;
-    UE_LOG(LogTemp, Warning, TEXT("%s: Reloaded! Ammo: %d (MaxAmmo: %d)"), *WeaponName, Ammo, MaxAmmo);
 
     UpdateAmmoHUD();
 }
@@ -171,7 +180,6 @@ void AT7_Weapon::UpdateAmmoHUD()
         int32 CurrentAmmo = Ammo;
         int32 MaxClipAmmo = MaxAmmo;  
 
-        UE_LOG(LogTemp, Warning, TEXT("Updating HUD: %s - Ammo: %d / %d"), *WeaponName, CurrentAmmo, MaxClipAmmo);
 
         GameState->UpdateWeaponInfo(WeaponIcon, WeaponName, CurrentAmmo, MaxClipAmmo);
     }

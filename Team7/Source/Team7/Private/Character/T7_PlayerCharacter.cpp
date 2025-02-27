@@ -90,12 +90,6 @@ float AT7_PlayerCharacter::GetCurrentHp() const
 	return 50.0f;
 }
 
-float AT7_PlayerCharacter::GetMaxHp() const
-{
-	return 100.0f;
-}
-
-
 FString AT7_PlayerCharacter::GetWeaponName()
 {
 	/*if (CurrentWeapon != nullptr)
