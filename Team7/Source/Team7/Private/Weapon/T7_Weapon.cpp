@@ -112,7 +112,7 @@ void AT7_Weapon::Fire()
 
         if (Projectile)
         {
-            Projectile->GetCollisionBox()->MoveIgnoreActors.Add(GetOwner());
+            
 
             UE_LOG(LogTemp, Warning, TEXT("Projectile Spawned at: %s"), *MuzzleLocation.ToString());
         }
