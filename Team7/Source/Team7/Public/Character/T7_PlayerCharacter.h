@@ -52,18 +52,6 @@ public:
 	TObjectPtr<UInputAction> ReloadAction = nullptr;
 
 	UFUNCTION(BlueprintPure, Category = "HUD")
-	float GetCurrentHp() const;
-
-	UFUNCTION(BlueprintPure, Category = "HUD")
-	float GetMaxHp() const;
-
-	UFUNCTION(BlueprintPure, Category = "HUD")
-	int GetCurrentAmmo() const;
-
-	UFUNCTION(BlueprintPure, Category = "HUD")
-	int GetMaxAmmo() const;
-
-	UFUNCTION(BlueprintPure, Category = "HUD")
 	FString GetWeaponName();
 
 	UPROPERTY(EditAnywhere, Category = Combat)

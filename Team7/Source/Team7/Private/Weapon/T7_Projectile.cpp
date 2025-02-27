@@ -10,6 +10,9 @@ AT7_Projectile::AT7_Projectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	OwnerActor = GetOwner(); 
+
+
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	SetRootComponent(CollisionBox);
 	CollisionBox->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
@@ -19,6 +22,8 @@ AT7_Projectile::AT7_Projectile()
 	//CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+
+	CollisionBox->OnComponentHit.AddDynamic(this, &AT7_Projectile::OnHit);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->InitialSpeed = 3000.f;
@@ -30,10 +35,12 @@ AT7_Projectile::AT7_Projectile()
 	SetLifeSpan(3.0f);
 }
 
+
 void AT7_Projectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	CollisionBox->OnComponentHit.AddDynamic(this, &AT7_Projectile::OnHit);
 }
 
 void AT7_Projectile::Tick(float DeltaTime)
@@ -45,34 +52,27 @@ void AT7_Projectile::Tick(float DeltaTime)
 void AT7_Projectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor == nullptr || OtherActor == this) return;
+	if (!OtherActor || OtherActor == this) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("Projectile hit: %s"), *OtherActor->GetName()); // 디버그 로그 추가
+	if (OtherActor == OwnerActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Projectile hit its owner, ignoring..."));
+		return;
+	}
 
-	float Damage = 20.0f; // 기본값
+	float Damage = 20.0f;
 
 	if (const AT7_CharacterBase* Character = Cast<AT7_CharacterBase>(OtherActor))
 	{
 		if (const AT7_Weapon* Weapon = Character->GetCurrentWeapon())
 		{
-			Damage = Weapon->GetDamage();  // GetDamage()가 정상적으로 호출됨
+			Damage = Weapon->GetDamage();
 		}
 	}
 
 	UGameplayStatics::ApplyDamage(OtherActor, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
 
+	UE_LOG(LogTemp, Warning, TEXT("Projectile hit: %s, Damage: %f"), *OtherActor->GetName(), Damage);
+
 	Destroy();
 }
-
-
-// GetCurrentWeapon()이 NULL임
-// PlayerCharacter의 OverlappingWeapon과 CharacterBase의 CurrentWeapon를 합치는게? 
-
-//float Damage = 0.0f;
-// if (const AT7_CharacterBase* Character = Cast<AT7_CharacterBase>(OtherActor))
-// {
-// 	if (const AT7_Weapon* Weapon = Character->GetCurrentWeapon())
-// 	{
-// 		Damage = Weapon->GetDamage();	
-// 	}
-// }

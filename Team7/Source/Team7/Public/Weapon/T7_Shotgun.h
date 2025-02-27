@@ -26,6 +26,5 @@ private:
 
 	FVector HitTarget;
 
-	UPROPERTY(EditAnywhere)
-	class UParticleSystem* ImpactParticles;
+	
 };
