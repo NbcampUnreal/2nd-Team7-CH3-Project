@@ -95,15 +95,6 @@ float AT7_PlayerCharacter::GetMaxHp() const
 	return 100.0f;
 }
 
-int AT7_PlayerCharacter::GetCurrentAmmo() const
-{
-	return 5;
-}
-
-int AT7_PlayerCharacter::GetMaxAmmo() const
-{
-	return 30;
-}
 
 FString AT7_PlayerCharacter::GetWeaponName()
 {
