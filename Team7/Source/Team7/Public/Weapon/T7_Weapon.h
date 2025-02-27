@@ -73,6 +73,7 @@ public:
 
     FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
 
+    
 
 protected:
     virtual void BeginPlay() override;
@@ -82,8 +83,10 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
     EWeaponType WeaponType;
 
+    UPROPERTY(EditAnywhere)
+    class UParticleSystem* BeamParticles;
 
-
+    void SpawnBeamEffect(FVector Start, FVector End);
 private:
     UPROPERTY(VisibleAnywhere, Category = "Weapon")
     class USphereComponent* PickupTrigger;

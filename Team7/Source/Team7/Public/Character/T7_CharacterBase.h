@@ -43,6 +43,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|CharacerStatus")
 	float CurrentHP = MaxHP;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|CharacerStatus")
 	float Armor = 10.0f;
 	

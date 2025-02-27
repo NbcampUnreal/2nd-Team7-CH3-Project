@@ -11,6 +11,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Team7/Public/System/T7_GameStateBase.h"
 #include "DrawDebugHelpers.h"  
+#include "particles/ParticleSystemComponent.h"
 
 AT7_Weapon::AT7_Weapon()
 {
@@ -56,6 +57,7 @@ void AT7_Weapon::Tick(float DeltaTime)
 
 }
 
+
 void AT7_Weapon::Fire()
 {
     if (GetOwner() == nullptr) return;
@@ -76,7 +78,7 @@ void AT7_Weapon::Fire()
 
     FVector MuzzleLocation = WeaponMesh->GetSocketLocation(FName("MuzzleSocket"));
     FVector ForwardVector = WeaponMesh->GetSocketRotation(FName("MuzzleSocket")).Vector();
-    MuzzleLocation += ForwardVector * 20.0f; 
+    MuzzleLocation += ForwardVector * 20.0f;  
 
     FVector CameraLocation;
     FRotator CameraRotation;
@@ -110,6 +112,8 @@ void AT7_Weapon::Fire()
 
         if (Projectile)
         {
+            
+
             UE_LOG(LogTemp, Warning, TEXT("Projectile Spawned at: %s"), *MuzzleLocation.ToString());
         }
         else
@@ -117,6 +121,8 @@ void AT7_Weapon::Fire()
             UE_LOG(LogTemp, Error, TEXT("Projectile Spawn Failed!"));
         }
     }
+
+    SpawnBeamEffect(MuzzleLocation, EndTrace);
 
     if (FireAnimation && WeaponMesh)
     {
@@ -126,6 +132,21 @@ void AT7_Weapon::Fire()
     SpendRound();
     UpdateAmmoHUD();
 }
+
+void AT7_Weapon::SpawnBeamEffect(FVector Start, FVector End)
+{
+    if (!BeamParticles) return; // 빔 파티클이 설정되지 않았으면 리턴
+
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(World, BeamParticles, Start);
+    if (Beam)
+    {
+        Beam->SetVectorParameter(FName("Target"), End);
+    }
+}
+
 
 
 void AT7_Weapon::SpendRound()
