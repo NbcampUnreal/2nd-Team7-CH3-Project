@@ -19,6 +19,20 @@ UUserWidget* AT7_PlayerController::GetHUDWidget() const
 	return HUDWidgetInstance;
 }
 
+UUserWidget* AT7_PlayerController::CreateKillLogWidget()
+{
+	if (KillLogWidgetClass)
+	{
+		KillLogWidgetInstance = CreateWidget<UUserWidget>(this, KillLogWidgetClass);
+		if (KillLogWidgetInstance)
+		{
+			return KillLogWidgetInstance;
+		}
+	}
+
+	return nullptr;
+}
+
 void AT7_PlayerController::ShowHUDWidget()
 {
 	if (HUDWidgetInstance)
