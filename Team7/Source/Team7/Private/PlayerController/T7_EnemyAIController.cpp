@@ -50,9 +50,12 @@ void AT7_EnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus
 	{
 		EnemyBlackboard->SetValueAsBool(TEXT("IsDetected"), true);
 
-		if (AT7_Projectile* Weapon = Cast<AT7_Projectile>(Actor))
+		if (AT7_Projectile* Projectile = Cast<AT7_Projectile>(Actor))
 		{
-			EnemyBlackboard->SetValueAsObject(TEXT("TargetActor"), UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			if (AT7_PlayerCharacter* PlayerCharacter = Cast<AT7_PlayerCharacter>(Projectile->GetOwner()->GetOwner()))
+			{
+				EnemyBlackboard->SetValueAsObject(TEXT("TargetActor"), PlayerCharacter);
+			}
 		}
 		if (AT7_PlayerCharacter* PlayerCharacter = Cast<AT7_PlayerCharacter>(Actor))
 		{
