@@ -4,6 +4,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "T7_GameStateBase.generated.h"
 
+class AT7_SpawnPoint;
 class AT7_PlayerController;
 class AT7_PlayerCharacter;
 class AT7_CharacterBase;
@@ -12,7 +13,7 @@ UCLASS()
 class TEAM7_API AT7_GameStateBase : public AGameStateBase
 {
 	GENERATED_BODY()
-	
+
 public:
 	AT7_GameStateBase();
 
@@ -39,6 +40,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void AddKillLog(AT7_CharacterBase* Enemy);
 
+	void RegisterSpawnPoint(AT7_SpawnPoint* SpawnPoint) { SpawnPoints.Emplace(SpawnPoint); }
+
+	TArray<TObjectPtr<AT7_SpawnPoint>> GetSpawnPoints() { return SpawnPoints; }
+
 	AT7_PlayerController* GetT7Controller();
 	AT7_PlayerCharacter* GetT7Character();
 
@@ -49,4 +54,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Score")
 	int32 Kill = 0;
 
+private:
+	UPROPERTY()
+	TArray<TObjectPtr<AT7_SpawnPoint>> SpawnPoints;
 };
