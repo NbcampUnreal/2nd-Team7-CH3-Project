@@ -39,7 +39,7 @@ AT7_PlayerCharacter::AT7_PlayerCharacter(const FObjectInitializer& ObjectInitial
 void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	const UT7_InputData* InputData = Cast<UT7_InputData>(UT7_AssetManager::Get().GetAssetByTag(T7GameplayTags::DA_INPUT_ACTION));
+	const UT7_InputData* InputData = Cast<UT7_InputData>(UT7_AssetManager::Get().GetAssetByTag(T7_InputTag::DA_INPUT_ACTION));
 	ensure(InputData);
 	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
@@ -51,34 +51,36 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	}
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		const UInputAction* JumpAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_JUMP);
+		const UInputAction* JumpAction = InputData->FindInputActionByTag(T7_InputTag::INPUT_ACTION_JUMP);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 
-		const UInputAction* MoveAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_MOVE);
+		const UInputAction* MoveAction = InputData->FindInputActionByTag(T7_InputTag::INPUT_ACTION_MOVE);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
 
-		const UInputAction* LookAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_LOOK);
+		const UInputAction* LookAction = InputData->FindInputActionByTag(T7_InputTag::INPUT_ACTION_LOOK);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 
-		const UInputAction* PickupAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_PICKUP);
+		const UInputAction* PickupAction = InputData->FindInputActionByTag(T7_InputTag::INPUT_ACTION_PICKUP);
 		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &ThisClass::PickupWeapon);
 
-		const UInputAction* FireAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_FIRE);
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AT7_PlayerCharacter::FireWeapon);
+		const UInputAction* FireAction = InputData->FindInputActionByTag(T7_InputTag::INPUT_ACTION_FIRE);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &AT7_PlayerCharacter::FireWeapon);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Ongoing, this, &AT7_PlayerCharacter::FireWeapon);
 
-		const UInputAction* SprintAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_SPRINT);
+		const UInputAction* SprintAction = InputData->FindInputActionByTag(T7_InputTag::INPUT_ACTION_SPRINT);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ThisClass::StartSprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 
-		const UInputAction* AimAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_AIM);
+		const UInputAction* AimAction = InputData->FindInputActionByTag(T7_InputTag::INPUT_ACTION_AIM);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ThisClass::StartAim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ThisClass::StopAim);
 
-		const UInputAction* SwitchCameraAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_SWITCHCAMERA);
+		const UInputAction* SwitchCameraAction = InputData->FindInputActionByTag(T7_InputTag::INPUT_ACTION_SWITCHCAMERA);
 		EnhancedInputComponent->BindAction(SwitchCameraAction, ETriggerEvent::Completed, this, &ThisClass::SwitchCamera);
 
+		const UInputAction* ReloadAction = InputData->FindInputActionByTag(T7_InputTag::INPUT_ACTION_RELOAD);
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &ThisClass::ReloadWeapon);
 
 	}

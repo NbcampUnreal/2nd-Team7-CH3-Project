@@ -48,9 +48,6 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "T7|Weapon")
 	AT7_Weapon* OverlappingWeapon = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "T7|Input")
-	TObjectPtr<UInputAction> ReloadAction = nullptr;
-
 	UFUNCTION(BlueprintPure, Category = "HUD")
 	FString GetWeaponName();
 

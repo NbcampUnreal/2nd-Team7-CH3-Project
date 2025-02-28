@@ -4,6 +4,7 @@
 #include "Team7/public/System/T7_GameStateBase.h"
 #include "Team7/Public/Character/T7_PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 AT7_CharacterBase::AT7_CharacterBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -18,6 +19,16 @@ float AT7_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent cons
 	
 	const float FinalDamage = ActualDamage * (1.0f - DamageReduction);
 	CurrentHP = FMath::Clamp(CurrentHP - FinalDamage, 0.0f, MaxHP);
+
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		AT7_GameStateBase* GameState = PC->GetWorld()->GetGameState<AT7_GameStateBase>();
+		if (GameState)
+		{
+			GameState->UpdateHUD();
+		}
+	}
+
 	if (FMath::IsNearlyZero(CurrentHP))
 	{
 		Dead();
@@ -68,6 +79,7 @@ void AT7_CharacterBase::Dead()
 {
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Ragdoll"));
 
 	// 각자 함수 받아서 이후 로직 처리
 		// Enemy는 특정 시간 지나서 시체 사라지게

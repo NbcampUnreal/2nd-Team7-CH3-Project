@@ -7,6 +7,7 @@
 class AT7_EnemyCharacter;
 class UAIPerceptionComponent;
 class UAISenseConfig_Sight;
+class UAISenseConfig_Damage;
 struct FAIStimulus;
 
 UCLASS()
@@ -34,4 +35,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Perception")
 	TObjectPtr<UAISenseConfig_Sight> SightConfig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Perception")
+	TObjectPtr<UAISenseConfig_Damage> DamageConfig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	float AttackRange = 500.0f;
 };
