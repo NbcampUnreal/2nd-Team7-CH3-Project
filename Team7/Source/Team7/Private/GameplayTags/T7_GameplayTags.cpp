@@ -1,10 +1,9 @@
 ﻿#include "GameplayTags/T7_GameplayTags.h"
 
-namespace T7GameplayTags
+namespace T7_InputTag
 {
-	UE_DEFINE_GAMEPLAY_TAG(BP_CLASS_WEAPON_1, "BP.Class.Weapon1");
-	
 	UE_DEFINE_GAMEPLAY_TAG(DA_INPUT_ACTION, "DA.Input.Action");
+	
 	UE_DEFINE_GAMEPLAY_TAG(INPUT_ACTION_MOVE, "Input.Action.Move");
 	UE_DEFINE_GAMEPLAY_TAG(INPUT_ACTION_LOOK, "Input.Action.Look");
 	UE_DEFINE_GAMEPLAY_TAG(INPUT_ACTION_AIM, "Input.Action.Aim");
@@ -14,4 +13,16 @@ namespace T7GameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(INPUT_ACTION_SPRINT, "Input.Action.Sprint");
 	UE_DEFINE_GAMEPLAY_TAG(INPUT_ACTION_SWITCHCAMERA, "Input.Action.SwitchCamera");
 	UE_DEFINE_GAMEPLAY_TAG(INPUT_ACTION_RELOAD, "Input.Action.Reload");
+}
+
+namespace T7_BPClassTag
+{
+	UE_DEFINE_GAMEPLAY_TAG(DA_BPClass, "DA.BPClass");
+	
+	UE_DEFINE_GAMEPLAY_TAG(BP_CLASS_ENEMY_NORMAL, "BP.Class.Enemy.Normal");
+	UE_DEFINE_GAMEPLAY_TAG(BP_CLASS_ENEMY_ELITE, "BP.Class.Enemy.Elite");
+
+	UE_DEFINE_GAMEPLAY_TAG(BP_CLASS_ITEMBOX_WEAPON, "BP.Class.ItemBox.Weapon");
+	UE_DEFINE_GAMEPLAY_TAG(BP_CLASS_ITEMBOX_MEDIKIT, "BP.Class.ItemBox.Medikit");
+	
 }
