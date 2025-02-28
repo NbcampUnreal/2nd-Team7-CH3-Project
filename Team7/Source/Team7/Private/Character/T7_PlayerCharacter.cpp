@@ -66,7 +66,8 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &ThisClass::PickupWeapon);
 
 		const UInputAction* FireAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_FIRE);
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AT7_PlayerCharacter::FireWeapon);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &AT7_PlayerCharacter::FireWeapon);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Ongoing, this, &AT7_PlayerCharacter::FireWeapon);
 
 		const UInputAction* SprintAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_SPRINT);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ThisClass::StartSprint);
@@ -79,6 +80,7 @@ void AT7_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		const UInputAction* SwitchCameraAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_SWITCHCAMERA);
 		EnhancedInputComponent->BindAction(SwitchCameraAction, ETriggerEvent::Completed, this, &ThisClass::SwitchCamera);
 
+		const UInputAction* ReloadAction = InputData->FindInputActionByTag(T7GameplayTags::INPUT_ACTION_RELOAD);
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &ThisClass::ReloadWeapon);
 
 	}
