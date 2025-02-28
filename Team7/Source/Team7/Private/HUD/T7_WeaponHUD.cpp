@@ -4,13 +4,14 @@
 
 void AT7_WeaponHUD::DrawHUD()
 {
-	Super::DrawHUD();
 
 	FVector2D ViewportSize;
 	if (GEngine)
 	{
 		GEngine->GameViewport->GetViewportSize(ViewportSize);
 		const FVector2D ViewportCenter(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+
+
 
 		if (HUDPackage.CrosshairsCenter)
 		{
@@ -23,6 +24,7 @@ void AT7_WeaponHUD::DrawHUD()
 		if (HUDPackage.CrosshairsRight)
 		{
 			DrawCrosshair(HUDPackage.CrosshairsRight, ViewportCenter);
+
 		}
 		if (HUDPackage.CrosshairsTop)
 		{
@@ -31,11 +33,12 @@ void AT7_WeaponHUD::DrawHUD()
 		if (HUDPackage.CrosshairsBottom)
 		{
 			DrawCrosshair(HUDPackage.CrosshairsBottom, ViewportCenter);
+
 		}
 	}
 }
 
-void AT7_WeaponHUD::DrawCrosshair(UTexture2D * Texture, FVector2D ViewportCenter)
+void AT7_WeaponHUD::DrawCrosshair(UTexture2D* Texture, FVector2D ViewportCenter)
 {
 	const float TextureWidth = Texture->GetSizeX();
 	const float TextureHeight = Texture->GetSizeY();

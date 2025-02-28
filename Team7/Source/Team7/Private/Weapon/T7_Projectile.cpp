@@ -5,12 +5,12 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Sound/SoundCue.h"
 AT7_Projectile::AT7_Projectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-
 
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	SetRootComponent(CollisionBox);
@@ -38,6 +38,17 @@ void AT7_Projectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (Tracer)
+	{
+		TracerComponent = UGameplayStatics::SpawnEmitterAttached(
+			Tracer,
+			CollisionBox,
+			FName(),
+			GetActorLocation(),
+			GetActorRotation(),
+			EAttachLocation::KeepWorldPosition
+		);
+	}
 }
 
 void AT7_Projectile::Tick(float DeltaTime)
@@ -65,7 +76,20 @@ void AT7_Projectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor
 
 	UGameplayStatics::ApplyDamage(OtherActor, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
 
-	UE_LOG(LogTemp, Warning, TEXT("Projectile hit: %s, Damage: %f"), *OtherActor->GetName(), Damage);
 
 	Destroy();
+}
+
+void AT7_Projectile::Destroyed()
+{
+	Super::Destroyed();
+
+	if (ImpactParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorTransform());
+	}
+	if (ImpactSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	}
 }

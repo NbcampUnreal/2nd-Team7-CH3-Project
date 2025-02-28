@@ -76,6 +76,7 @@ public:
     
 
 protected:
+
     virtual void BeginPlay() override;
     FTimerHandle TimerHandle_Reload;
 

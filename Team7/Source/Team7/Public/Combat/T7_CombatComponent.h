@@ -24,7 +24,7 @@ public:
 	void SetHUDCrosshairs(float DeltaTime);
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 private:
 
 	class AT7_WeaponHUD* HUD;

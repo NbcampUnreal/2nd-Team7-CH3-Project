@@ -31,6 +31,7 @@ void UT7_CharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		return;
 	}
+
 	Velocity = MovementComponent->Velocity;
 	GroundSpeed = Velocity.Size2D();
 	bShouldMove = (GroundSpeed > 3.0f && MovementComponent->GetCurrentAcceleration() != FVector::ZeroVector);

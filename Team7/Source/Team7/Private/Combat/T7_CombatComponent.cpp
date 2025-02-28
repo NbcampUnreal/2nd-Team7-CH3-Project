@@ -92,6 +92,7 @@ void UT7_CombatComponent::SetHUDCrosshairs(float DeltaTime)
 				HUDPackage.CrosshairsBottom = nullptr;
 				HUDPackage.CrosshairsTop = nullptr;
 			}
+
 			HUD->SetHUDPackage(HUDPackage);
 		}
 	}

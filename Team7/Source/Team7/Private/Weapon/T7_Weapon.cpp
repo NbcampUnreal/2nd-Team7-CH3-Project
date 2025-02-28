@@ -98,7 +98,6 @@ void AT7_Weapon::Fire()
     FVector FireDirection = (EndTrace - MuzzleLocation).GetSafeNormal();
 
     DrawDebugLine(World, MuzzleLocation, EndTrace, FColor::Red, false, 2.0f, 0, 2.0f);
-    DrawDebugSphere(World, EndTrace, 10.0f, 12, FColor::Green, false, 2.0f);
 
     if (ProjectileClass)
     {
@@ -135,7 +134,7 @@ void AT7_Weapon::Fire()
 
 void AT7_Weapon::SpawnBeamEffect(FVector Start, FVector End)
 {
-    if (!BeamParticles) return; // 빔 파티클이 설정되지 않았으면 리턴
+    if (!BeamParticles) return; 
 
     UWorld* World = GetWorld();
     if (!World) return;
@@ -248,3 +247,4 @@ void AT7_Weapon::SetPickupWidgetVisibility(bool bVisible)
         PickupWidget->SetVisibility(bVisible);
     }
 }
+
