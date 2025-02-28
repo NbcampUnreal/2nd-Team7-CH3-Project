@@ -25,4 +25,3 @@ void AT7_EnemyCharacter::Dead()
 
 	SetLifeSpan(5.0f);
 }
-

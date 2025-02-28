@@ -14,4 +14,5 @@ public:
 
 private:
 	virtual void Dead() override;
+
 };

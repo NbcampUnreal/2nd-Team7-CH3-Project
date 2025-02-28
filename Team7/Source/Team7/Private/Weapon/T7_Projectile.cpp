@@ -1,10 +1,12 @@
 
 #include "Weapon/T7_Projectile.h"
 #include "Team7/Public/Character/T7_CharacterBase.h"
+#include "Team7/Public/Character/T7_EnemyCharacter.h"
 #include "Team7/Public/Weapon/T7_Weapon.h"  // 추가!
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Perception/AISense_Damage.h"
 
 AT7_Projectile::AT7_Projectile()
 {
@@ -51,7 +53,8 @@ void AT7_Projectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor
 {
 	if (OtherActor == nullptr || OtherActor == this) return;
 
-	
+	// 임시로 설정
+	SetOwner(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	float Damage = 20.0f;
 
@@ -63,8 +66,14 @@ void AT7_Projectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor
 		}
 	}
 
-	UGameplayStatics::ApplyDamage(OtherActor, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
+	AActor* EnemyController = nullptr;
+	if (AT7_EnemyCharacter* Enemy = Cast<AT7_EnemyCharacter>(OtherActor))
+	{
+		EnemyController = Enemy->GetController();
+	}
 
+	UGameplayStatics::ApplyDamage(OtherActor, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
+	UAISense_Damage::ReportDamageEvent(GetWorld(), EnemyController, this->GetOwner(), Damage, this->GetOwner()->GetActorLocation(), GetActorLocation());
 	UE_LOG(LogTemp, Warning, TEXT("Projectile hit: %s, Damage: %f"), *OtherActor->GetName(), Damage);
 
 	Destroy();
