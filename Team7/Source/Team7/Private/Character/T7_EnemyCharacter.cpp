@@ -1,4 +1,6 @@
 #include "Team7/Public/Character/T7_EnemyCharacter.h"
+#include "Team7/Public/System/T7_GameStateBase.h"
+#include "Kismet/GameplayStatics.h"
 
 AT7_EnemyCharacter::AT7_EnemyCharacter()
 {
@@ -8,7 +10,13 @@ AT7_EnemyCharacter::AT7_EnemyCharacter()
 void AT7_EnemyCharacter::Dead()
 {
 	Super::Dead();
-	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ThisClass::Destroyed, 10.0f, false);
+	
+	if (AT7_GameStateBase* GameState = Cast<AT7_GameStateBase>(UGameplayStatics::GetGameState(GetWorld())))
+	{
+		GameState->AddKill(1, this);
+		GameState->AddScore(100);
+	}
+
+	SetLifeSpan(5.0f);
 }
 

@@ -215,7 +215,7 @@ void AT7_Weapon::OnWeaponOverlap(UPrimitiveComponent* OverlappedComponent, AActo
         PlayerCharacter->OverlappingWeapon = this;
         PickupWidget->SetVisibility(true);
 
-        UpdateAmmoHUD();
+        //UpdateAmmoHUD();
     }
 }
 
@@ -228,11 +228,11 @@ void AT7_Weapon::OnWeaponEndOverlap(UPrimitiveComponent* OverlappedComponent, AA
         PlayerCharacter->OverlappingWeapon = nullptr;
         PickupWidget->SetVisibility(false);
 
-        AT7_GameStateBase* GameState = GetWorld() ? GetWorld()->GetGameState<AT7_GameStateBase>() : nullptr;
-        if (GameState)
-        {
-            GameState->UpdateWeaponInfo(nullptr, TEXT(""), 0, 0);  // UI 숨김
-        }
+        //AT7_GameStateBase* GameState = GetWorld() ? GetWorld()->GetGameState<AT7_GameStateBase>() : nullptr;
+        //if (GameState)
+        //{
+        //    GameState->UpdateWeaponInfo(nullptr, TEXT(""), 0, 0);  // UI 숨김
+        //}
     }
 }
 

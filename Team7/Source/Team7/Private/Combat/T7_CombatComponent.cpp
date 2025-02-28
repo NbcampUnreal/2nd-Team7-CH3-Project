@@ -4,6 +4,7 @@
 #include "Weapon/T7_Weapon.h"
 #include "PlayerController/T7_PlayerController.h"
 #include "HUD/T7_WeaponHud.h"
+#include "Team7/Public/System/T7_GameStateBase.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -45,6 +46,14 @@ void UT7_CombatComponent::EquipWeapon(AT7_Weapon* WeaponToEquip)
 	EquippedWeapon->SetOwner(Character);
 	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 	Character->bUseControllerRotationYaw = true;
+
+	if (AGameStateBase* GameState = UGameplayStatics::GetGameState(GetWorld()))
+	{
+		if (AT7_GameStateBase* T7_GameStateBase = Cast<AT7_GameStateBase>(GameState))
+		{
+			T7_GameStateBase->UpdateWeaponInfo(EquippedWeapon->WeaponIcon, EquippedWeapon->WeaponName, EquippedWeapon->GetAmmo(), EquippedWeapon->GetMaxAmmo());
+		}
+	}
 }
 
 
@@ -55,6 +64,14 @@ void UT7_CombatComponent::DropWeapon()
 		EquippedWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		EquippedWeapon->SetActorEnableCollision(true);
 		EquippedWeapon = nullptr;
+	}
+
+	if (AGameStateBase* GameState = UGameplayStatics::GetGameState(GetWorld()))
+	{
+		if (AT7_GameStateBase* T7_GameStateBase = Cast<AT7_GameStateBase>(GameState))
+		{
+			T7_GameStateBase->UpdateWeaponInfo(nullptr, TEXT("Knife"), 0, 0);
+		}
 	}
 }
 
